@@ -1,0 +1,19 @@
+[user]
+    name = qi7876
+    email = 97651950+qi7876@users.noreply.github.com
+[init]
+    defaultBranch = main
+[pull]
+    ff = only
+[fetch]
+    prune = true
+[push]
+    default = simple
+    autoSetupRemote = true
+[merge]
+    conflictStyle = zdiff3
+[diff]
+    algorithm = histogram
+    colorMoved = default
+[alias]
+    lg = log --graph --decorate --oneline --all
