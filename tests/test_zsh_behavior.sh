@@ -11,6 +11,27 @@ fail() {
 for platform in macos linux; do
     config="$repo_dir/shell-$platform/.zshrc"
 
+    environment=$(HOME=/tmp/dotfiles-test-home zsh -f -c '
+        unset MIHOMO_SECRET
+        source "$1" 2>/dev/null
+        printf "%s\n" \
+            "$http_proxy" "$https_proxy" "$no_proxy" \
+            "$HTTP_PROXY" "$HTTPS_PROXY" "$NO_PROXY" \
+            "$MIHOMO_API" "$MIHOMO_CONFIG" "${MIHOMO_SECRET-unset}"
+    ' zsh "$repo_dir/shell-$platform/.zshenv")
+    expected_environment=$(printf '%s\n' \
+        'http://127.0.0.1:7890' \
+        'http://127.0.0.1:7890' \
+        'localhost,127.0.0.1,::1' \
+        'http://127.0.0.1:7890' \
+        'http://127.0.0.1:7890' \
+        'localhost,127.0.0.1,::1' \
+        'http://127.0.0.1:9090' \
+        '/tmp/dotfiles-test-home/.config/mihomo/config.yaml' \
+        'unset')
+    test "$environment" = "$expected_environment" \
+        || fail "shell-$platform does not provide the documented non-secret environment"
+
     if zsh -c '
         source "$1"
         base64() { return 29 }

@@ -29,7 +29,10 @@ set -- "$shell_package" git tmux kitty vim gh agents ssh
 mkdir -p "$target"
 
 # Check the complete operation before creating links or local-only files.
-stow --dir="$repo_dir" --target="$target" --no --restow "$@"
+if ! preflight_output=$(stow --dir="$repo_dir" --target="$target" --no --restow "$@" 2>&1); then
+    printf '%s\n' "$preflight_output" >&2
+    exit 1
+fi
 
 umask 077
 mkdir -p "$target/.config/dotfiles" "$target/.local/state/vim" "$target/.ssh"

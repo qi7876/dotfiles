@@ -49,7 +49,8 @@ removes them:
 - `~/.config/dotfiles/secrets.zsh`
 - `~/.ssh/config.local`
 
-For the current shell helpers, add the required values manually:
+The shared `.zshenv` files configure the local proxy endpoints and Mihomo config
+path with these defaults:
 
 ```sh
 export http_proxy='http://127.0.0.1:7890'
@@ -59,8 +60,14 @@ export HTTP_PROXY="$http_proxy"
 export HTTPS_PROXY="$https_proxy"
 export NO_PROXY="$no_proxy"
 export MIHOMO_API='http://127.0.0.1:9090'
+export MIHOMO_CONFIG="$HOME/.config/mihomo/config.yaml"
+```
+
+Only the secret must be added manually to
+`~/.config/dotfiles/secrets.zsh` when Mihomo authentication is enabled:
+
+```sh
 export MIHOMO_SECRET=
-export MIHOMO_CONFIG='/path/to/mihomo/config.yaml'
 ```
 
 Private SSH hosts belong in `~/.ssh/config.local`. SSH keys, `known_hosts`,

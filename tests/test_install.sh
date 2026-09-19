@@ -35,7 +35,11 @@ mkdir -p "$home_dir"
 darwin_bin="$test_root/darwin-bin"
 fake_uname "$darwin_bin" Darwin
 
-PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/install.sh"
+install_output=$(PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" \
+    "$repo_dir/scripts/install.sh" 2>&1)
+case "$install_output" in
+    *'simulation mode'*) fail "install exposed Stow's simulation warning" ;;
+esac
 
 assert_link "$home_dir/.zshrc"
 assert_link "$home_dir/.zprofile"
@@ -71,10 +75,12 @@ test -d "$home_dir/.local/state/vim" || fail "uninstall removed the Vim state di
 conflict_home="$test_root/conflict-home"
 mkdir -p "$conflict_home"
 printf '%s\n' 'keep me' >"$conflict_home/.zshrc"
-if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$conflict_home" \
-    "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
+if conflict_output=$(PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$conflict_home" \
+    "$repo_dir/scripts/install.sh" 2>&1); then
     fail "install succeeded despite an existing file conflict"
 fi
+printf '%s\n' "$conflict_output" | grep -q '.zshrc' \
+    || fail "install hid the Stow conflict diagnostic"
 test "$(cat "$conflict_home/.zshrc")" = 'keep me' || fail "conflicting file was modified"
 
 linux_home="$test_root/linux-home"
