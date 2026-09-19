@@ -12,12 +12,14 @@ alias l='ls -ChF'
 alias kssh='kitten ssh'
 
 clip() {
+    setopt local_options pipe_fail
     local data
-    data="$(base64 | tr -d '\n')"
+    data="$(base64 | tr -d '\n')" || return $?
     printf '\033]52;c;%s\033\\' "$data" > /dev/tty
 }
 
 ccat() {
+    setopt local_options pipe_fail
     cat -- "$@" | tee >(clip)
 }
 

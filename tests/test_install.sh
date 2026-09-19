@@ -51,6 +51,7 @@ secrets_file="$home_dir/.config/dotfiles/secrets.zsh"
 ssh_local_file="$home_dir/.ssh/config.local"
 test -f "$secrets_file" || fail "secrets file was not created"
 test -f "$ssh_local_file" || fail "SSH local config was not created"
+test -d "$home_dir/.local/state/vim" || fail "Vim state directory was not created"
 test "$(stat -f '%Lp' "$secrets_file" 2>/dev/null || stat -c '%a' "$secrets_file")" = 600 \
     || fail "secrets file permissions are not 600"
 
@@ -65,6 +66,7 @@ test ! -L "$home_dir/.zshrc" || fail "shell link was not removed"
 test ! -L "$home_dir/.ssh/config" || fail "SSH config link was not removed"
 test -f "$secrets_file" || fail "uninstall removed the secrets file"
 test -f "$ssh_local_file" || fail "uninstall removed the SSH local config"
+test -d "$home_dir/.local/state/vim" || fail "uninstall removed the Vim state directory"
 
 conflict_home="$test_root/conflict-home"
 mkdir -p "$conflict_home"

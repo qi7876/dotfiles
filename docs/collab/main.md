@@ -16,6 +16,8 @@ caches, and application state remain local.
 - Both Zsh configurations manage executable search paths through the unique tied `path` array.
 - FZF uses native Zsh integration and skips dependency, cache, and generated directories.
 - Mihomo helpers preserve curl, pipeline, encoding, and JSON construction failures.
+- Clipboard helpers preserve pipeline failures, and fresh installs prepare Vim's state directory.
+- Local CI loads the tmux, Vim, Git, Kitty, and GitHub CLI configurations it can validate.
 - No remote repository or remote CI is configured.
 
 ## Next

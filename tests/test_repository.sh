@@ -28,6 +28,12 @@ for file in scripts/install.sh scripts/uninstall.sh scripts/check.sh; do
     sh -n "$repo_dir/$file" || fail "$file has invalid POSIX shell syntax"
 done
 
+for command_name in rg ssh; do
+    grep -Eq "^for command_name in .* ${command_name}([[:space:]]|;)" \
+        "$repo_dir/scripts/check.sh" \
+        || fail "check.sh does not declare $command_name as a test dependency"
+done
+
 if rg -n 'uname|Darwin|Linux' "$repo_dir/shell-macos" "$repo_dir/shell-linux"; then
     fail "runtime platform detection exists inside a Zsh configuration"
 fi

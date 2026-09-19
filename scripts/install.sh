@@ -32,7 +32,7 @@ mkdir -p "$target"
 stow --dir="$repo_dir" --target="$target" --no --restow "$@"
 
 umask 077
-mkdir -p "$target/.config/dotfiles" "$target/.ssh"
+mkdir -p "$target/.config/dotfiles" "$target/.local/state/vim" "$target/.ssh"
 secrets_file="$target/.config/dotfiles/secrets.zsh"
 ssh_local_file="$target/.ssh/config.local"
 

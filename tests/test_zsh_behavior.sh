@@ -11,6 +11,23 @@ fail() {
 for platform in macos linux; do
     config="$repo_dir/shell-$platform/.zshrc"
 
+    if zsh -c '
+        source "$1"
+        base64() { return 29 }
+        printf() { return 0 }
+        clip </dev/null
+    ' zsh "$config" >/dev/null 2>&1; then
+        fail "shell-$platform clip hid a base64 failure"
+    fi
+
+    if zsh -c '
+        source "$1"
+        clip() { cat >/dev/null }
+        ccat /definitely/not/a/dotfiles-file
+    ' zsh "$config" >/dev/null 2>&1; then
+        fail "shell-$platform ccat hid a cat failure"
+    fi
+
     for operation in update set reload; do
         case "$operation" in
             update) expected='Updated: example' ;;

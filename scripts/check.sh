@@ -4,7 +4,7 @@ set -eu
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 missing=''
 
-for command_name in git stow zsh fzf zoxide jq tmux vim; do
+for command_name in git stow zsh fzf zoxide jq tmux vim rg ssh; do
     if ! command -v "$command_name" >/dev/null 2>&1; then
         missing="$missing $command_name"
     fi

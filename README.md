@@ -11,8 +11,8 @@ files themselves contain no runtime platform detection or shared fragments.
 
 ## Prerequisites
 
-- Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, and Vim
-- macOS: `brew install stow fzf zoxide jq tmux vim`
+- Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, Vim, ripgrep, and OpenSSH
+- macOS: `brew install stow fzf zoxide jq tmux vim ripgrep`
 - Debian/Ubuntu: install the equivalent packages with `apt`
 
 Kitty and GitHub CLI configuration can be linked even when their applications
