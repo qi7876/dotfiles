@@ -32,12 +32,25 @@ if rg -n 'uname|Darwin|Linux' "$repo_dir/shell-macos" "$repo_dir/shell-linux"; t
     fail "runtime platform detection exists inside a Zsh configuration"
 fi
 
-grep -q 'pbcopy' "$repo_dir/shell-macos/.zshrc" \
-    || fail "macOS clipboard configuration is missing"
+grep -Fq "printf '\\033]52" "$repo_dir/shell-macos/.zshrc" \
+    || fail "macOS OSC52 clipboard configuration is missing"
+if rg -n 'pbcopy|SSH_CONNECTION' "$repo_dir/shell-macos/.zshrc"; then
+    fail "macOS clipboard configuration still has platform-specific branches"
+fi
 grep -Fq "printf '\\033]52" "$repo_dir/shell-linux/.zshrc" \
     || fail "Linux OSC52 clipboard configuration is missing"
 if rg -n '/opt/homebrew|pbcopy' "$repo_dir/shell-linux"; then
     fail "Linux configuration contains a macOS-only setting"
+fi
+
+grep -Fq 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"' "$repo_dir/shell-macos/.zshenv" \
+    || fail "macOS rustup path is not initialized from .zshenv"
+grep -Fq 'export PATH="/opt/homebrew/opt/node@24/bin:$PATH"' "$repo_dir/shell-macos/.zshenv" \
+    || fail "macOS Node path is not initialized from .zshenv"
+grep -Fq 'eval "$(/opt/homebrew/bin/brew shellenv)"' "$repo_dir/shell-macos/.zprofile" \
+    || fail "macOS Homebrew initialization is not using the fixed path"
+if rg -n 'rustup|node@24' "$repo_dir/shell-macos/.zprofile"; then
+    fail "non-login PATH initialization remains in .zprofile"
 fi
 
 grep -q '^Include ~/.ssh/config.local$' "$repo_dir/ssh/.ssh/config" \

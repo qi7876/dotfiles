@@ -11,6 +11,7 @@ caches, and application state remain local.
 - Baseline repository initialized on `main`.
 - Initial GNU Stow bootstrap is implemented and locally tested.
 - macOS and Linux use separate, self-contained Zsh packages selected at install time.
+- Both platforms use OSC 52 clipboard writes; macOS keeps PATH initialization available to non-login shells.
 - No remote repository or remote CI is configured.
 
 ## Next

@@ -97,7 +97,7 @@ mh-update-provider() {
     local provider="${1:?usage: mh-update-provider <provider>}"
     local encoded
     encoded=$(printf '%s' "$provider" | jq -sRr @uri)
-    _mhcurl -X PUT "$MIHOMO_API/providers/proxies/$encoded"
+    _mhcurl -X PUT "$MIHOMO_API/providers/proxies/$encoded" || return $?
     printf 'Updated: %s\n' "$provider"
 }
 

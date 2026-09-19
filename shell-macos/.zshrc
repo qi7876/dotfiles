@@ -12,13 +12,9 @@ alias l='ls -ChF'
 alias kssh='kitten ssh'
 
 clip() {
-    if [[ -z "$SSH_CONNECTION" ]]; then
-        pbcopy
-    else
-        local data
-        data="$(base64 | tr -d '\n')"
-        printf '\033]52;c;%s\033\\' "$data" > /dev/tty
-    fi
+    local data
+    data="$(base64 | tr -d '\n')"
+    printf '\033]52;c;%s\033\\' "$data" > /dev/tty
 }
 
 ccat() {
@@ -101,7 +97,7 @@ mh-update-provider() {
     local provider="${1:?usage: mh-update-provider <provider>}"
     local encoded
     encoded=$(printf '%s' "$provider" | jq -sRr @uri)
-    _mhcurl -X PUT "$MIHOMO_API/providers/proxies/$encoded"
+    _mhcurl -X PUT "$MIHOMO_API/providers/proxies/$encoded" || return $?
     printf 'Updated: %s\n' "$provider"
 }
 
