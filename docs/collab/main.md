@@ -12,6 +12,7 @@ caches, and application state remain local.
 - Initial GNU Stow bootstrap is implemented and locally tested.
 - macOS and Linux use separate, self-contained Zsh packages selected at install time.
 - Both platforms use OSC 52 clipboard writes; macOS keeps PATH initialization available to non-login shells.
+- Installation and removal are full-set operations with no package-selection interface.
 - No remote repository or remote CI is configured.
 
 ## Next

@@ -1,7 +1,7 @@
 PROMPT='%F{4}%n@%m %F{5}%~%f
 %F{2}%(!.#.$)%f '
 
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.venv,__pycache__,target"
+export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.venv,__pycache__,target'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -79,7 +79,7 @@ mh-set-group-proxy() {
     encoded=$(printf '%s' "$group" | jq -sRr @uri)
     _mhcurl -X PUT -H 'Content-Type: application/json' \
         -d "$(jq -cn --arg name "$proxy" '{name: $name}')" \
-        "$MIHOMO_API/proxies/$encoded"
+        "$MIHOMO_API/proxies/$encoded" || return $?
     printf '%s -> %s\n' "$group" "$proxy"
 }
 
@@ -105,7 +105,7 @@ mh-reload() {
     : "${MIHOMO_CONFIG:?set MIHOMO_CONFIG in ~/.config/dotfiles/secrets.zsh}"
     _mhcurl -X PUT -H 'Content-Type: application/json' \
         -d "$(jq -cn --arg path "$MIHOMO_CONFIG" '{path: $path}')" \
-        "$MIHOMO_API/configs?force=true"
+        "$MIHOMO_API/configs?force=true" || return $?
     printf '%s\n' 'mihomo config reloaded'
 }
 

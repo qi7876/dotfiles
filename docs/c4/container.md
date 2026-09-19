@@ -5,7 +5,7 @@ C4Container
     title dotfiles containers
     Person(owner, "Owner")
     Container(repo, "Configuration packages", "Files", "Shared packages plus independent macOS and Linux Zsh trees")
-    Container(scripts, "Management scripts", "POSIX shell", "Selects the platform package and manages links")
+    Container(scripts, "Management scripts", "POSIX shell", "Selects the platform package and manages the complete link set")
     Container(tests, "Local tests", "POSIX shell", "Tests safety, conflicts, idempotency and syntax")
     Container_Ext(stow, "GNU Stow", "CLI", "Creates and removes symbolic links")
     ContainerDb(home, "Home directory", "Filesystem", "Linked configuration and private local files")
@@ -18,7 +18,7 @@ C4Container
     Rel(scripts, home, "Creates missing private files once")
 ```
 
-The scripts translate the public `shell` name to `shell-macos` or `shell-linux`
-before preflighting the complete Stow operation. Platform detection never runs
-inside Zsh. GNU Stow owns only symbolic links; `secrets.zsh` and `config.local`
-remain ordinary local files.
+The scripts select `shell-macos` or `shell-linux`, combine it with every shared
+package, and preflight the complete Stow operation. Platform detection never
+runs inside Zsh. GNU Stow owns only symbolic links; `secrets.zsh` and
+`config.local` remain ordinary local files.

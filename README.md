@@ -27,15 +27,16 @@ cd ~/projects/dotfiles
 ./scripts/install.sh
 ```
 
-Install or remove selected packages by passing their names:
+Installation and removal always operate on the complete configuration set:
 
 ```sh
-./scripts/install.sh shell git tmux
-./scripts/uninstall.sh shell git tmux
+./scripts/install.sh
+./scripts/uninstall.sh
 ```
 
-On macOS, `shell` deploys `shell-macos`; on Linux, it deploys `shell-linux`.
-Other kernels are rejected before the script creates links or local files.
+Package arguments are intentionally unsupported. On macOS the scripts deploy
+`shell-macos`; on Linux they deploy `shell-linux`. Other kernels are rejected
+before the script creates links or local files.
 
 Installation stops on conflicts instead of overwriting existing files. Use
 `DOTFILES_TARGET=/temporary/home` to operate on a different home directory.

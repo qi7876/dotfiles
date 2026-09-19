@@ -3,7 +3,11 @@ set -eu
 
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 target=${DOTFILES_TARGET:-$HOME}
-all_packages='shell git tmux kitty vim gh agents ssh'
+
+if [ "$#" -ne 0 ]; then
+    printf 'usage: %s\n' "$0" >&2
+    exit 2
+fi
 
 command -v stow >/dev/null 2>&1 || {
     printf '%s\n' 'error: GNU Stow is required' >&2
@@ -20,29 +24,6 @@ case "$kernel_name" in
         ;;
 esac
 
-if [ "$#" -eq 0 ]; then
-    set -- $all_packages
-fi
-
-for package in "$@"; do
-    case " $all_packages " in
-        *" $package "*) ;;
-        *)
-            printf 'error: unknown package: %s\n' "$package" >&2
-            exit 1
-            ;;
-    esac
-done
-
-resolved_packages=''
-for package in "$@"; do
-    if [ "$package" = shell ]; then
-        resolved_package=$shell_package
-    else
-        resolved_package=$package
-    fi
-    resolved_packages="$resolved_packages $resolved_package"
-done
-set -- $resolved_packages
+set -- "$shell_package" git tmux kitty vim gh agents ssh
 
 stow --dir="$repo_dir" --target="$target" --delete "$@"

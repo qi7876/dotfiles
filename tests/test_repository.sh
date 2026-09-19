@@ -43,6 +43,17 @@ if rg -n '/opt/homebrew|pbcopy' "$repo_dir/shell-linux"; then
     fail "Linux configuration contains a macOS-only setting"
 fi
 
+expected_fzf_opts='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.venv,__pycache__,target'
+for platform in macos linux; do
+    actual_fzf_opts=$(FZF_DEFAULT_OPTS='--layout=reverse' zsh -c '
+        source "$1" 2>/dev/null
+        source "$1" 2>/dev/null
+        printf "%s" "$FZF_DEFAULT_OPTS"
+    ' zsh "$repo_dir/shell-$platform/.zshrc")
+    test "$actual_fzf_opts" = "$expected_fzf_opts" \
+        || fail "shell-$platform does not set idempotent FZF defaults"
+done
+
 grep -Fq 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"' "$repo_dir/shell-macos/.zshenv" \
     || fail "macOS rustup path is not initialized from .zshenv"
 grep -Fq 'export PATH="/opt/homebrew/opt/node@24/bin:$PATH"' "$repo_dir/shell-macos/.zshenv" \
@@ -55,5 +66,11 @@ fi
 
 grep -q '^Include ~/.ssh/config.local$' "$repo_dir/ssh/.ssh/config" \
     || fail "SSH config does not include the local file"
+
+github_ssh=$(ssh -G -F "$repo_dir/ssh/.ssh/config" github.com 2>/dev/null)
+printf '%s\n' "$github_ssh" | grep -q '^hostname ssh.github.com$' \
+    || fail "GitHub SSH hostname is incorrect"
+printf '%s\n' "$github_ssh" | grep -q '^port 443$' \
+    || fail "GitHub SSH does not use port 443"
 
 printf '%s\n' 'repository safety tests passed'
