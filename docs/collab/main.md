@@ -14,6 +14,8 @@ caches, and application state remain local.
 - Both platforms use OSC 52 clipboard writes; macOS keeps PATH initialization available to non-login shells.
 - Installation and removal are full-set operations with no package-selection interface.
 - Both Zsh configurations manage executable search paths through the unique tied `path` array.
+- FZF uses native Zsh integration and skips dependency, cache, and generated directories.
+- Mihomo helpers preserve curl, pipeline, encoding, and JSON construction failures.
 - No remote repository or remote CI is configured.
 
 ## Next

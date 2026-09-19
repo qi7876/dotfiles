@@ -48,6 +48,78 @@ for platform in macos linux; do
         rm -f "$failure_output_file"
         trap - EXIT HUP INT TERM
     done
+
+    for operation in ver status get delay; do
+        failure_output_file="${TMPDIR:-/tmp}/dotfiles-mh-query-failure.$$"
+        trap 'rm -f "$failure_output_file"' EXIT HUP INT TERM
+        if zsh -c '
+            source "$1"
+            _mhcurl() { return 23 }
+            case "$2" in
+                ver) mh-ver ;;
+                status) mh-status ;;
+                get) mh-get-group group ;;
+                delay) mh-delay-group group ;;
+            esac
+        ' zsh "$config" "$operation" >"$failure_output_file" 2>/dev/null; then
+            fail "shell-$platform hid a failed $operation query"
+        fi
+        test ! -s "$failure_output_file" \
+            || fail "shell-$platform emitted output for a failed $operation query"
+        rm -f "$failure_output_file"
+        trap - EXIT HUP INT TERM
+    done
+
+    for operation in ver status get delay; do
+        success_output=$(zsh -c '
+            source "$1"
+            operation=$2
+            _mhcurl() {
+                case "$operation" in
+                    ver) print '\''{"version":"1.0"}'\'' ;;
+                    status) print '\''{"proxies":{"group":{"now":"proxy"},"direct":{"now":null}}}'\'' ;;
+                    get) print '\''{"name":"group"}'\'' ;;
+                    delay) print '\''{"proxy":12}'\'' ;;
+                esac
+            }
+            case "$2" in
+                ver) mh-ver ;;
+                status) mh-status ;;
+                get) mh-get-group group ;;
+                delay) mh-delay-group group ;;
+            esac
+        ' zsh "$config" "$operation" 2>/dev/null)
+        case "$operation:$success_output" in
+            'ver:'*'"version": "1.0"'*) ;;
+            'status:group -> proxy') ;;
+            'get:'*'"name": "group"'*) ;;
+            'delay:'*'"proxy": 12'*) ;;
+            *) fail "shell-$platform changed successful $operation output" ;;
+        esac
+    done
+
+    for operation in get set delay update reload; do
+        marker_file="${TMPDIR:-/tmp}/dotfiles-mh-api-marker.$$"
+        rm -f "$marker_file"
+        trap 'rm -f "$marker_file"' EXIT HUP INT TERM
+        if MARKER_FILE="$marker_file" zsh -c '
+            source "$1"
+            jq() { return 24 }
+            _mhcurl() { print called >>"$MARKER_FILE"; return 0 }
+            case "$2" in
+                get) mh-get-group group ;;
+                set) mh-set-group-proxy group proxy ;;
+                delay) mh-delay-group group ;;
+                update) mh-update-provider provider ;;
+                reload) MIHOMO_CONFIG=/tmp/config mh-reload ;;
+            esac
+        ' zsh "$config" "$operation" >/dev/null 2>&1; then
+            fail "shell-$platform hid a jq failure during $operation"
+        fi
+        test ! -e "$marker_file" \
+            || fail "shell-$platform called the API after jq failed during $operation"
+        trap - EXIT HUP INT TERM
+    done
 done
 
 macos_path=$(PATH="/usr/bin:/bin:$HOME/.local/bin:/usr/bin" zsh -f -c '

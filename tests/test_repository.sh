@@ -43,7 +43,7 @@ if rg -n '/opt/homebrew|pbcopy' "$repo_dir/shell-linux"; then
     fail "Linux configuration contains a macOS-only setting"
 fi
 
-expected_fzf_opts='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.venv,__pycache__,target'
+expected_fzf_opts='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 for platform in macos linux; do
     actual_fzf_opts=$(FZF_DEFAULT_OPTS='--layout=reverse' zsh -c '
         source "$1" 2>/dev/null
@@ -52,6 +52,14 @@ for platform in macos linux; do
     ' zsh "$repo_dir/shell-$platform/.zshrc")
     test "$actual_fzf_opts" = "$expected_fzf_opts" \
         || fail "shell-$platform does not set idempotent FZF defaults"
+    grep -Fq 'source <(fzf --zsh)' "$repo_dir/shell-$platform/.zshrc" \
+        || fail "shell-$platform does not use native FZF sourcing"
+    if grep -Fq 'eval "$(fzf --zsh)"' "$repo_dir/shell-$platform/.zshrc"; then
+        fail "shell-$platform still evals FZF integration"
+    fi
+    if grep -Eq '^alias mh-(ver|status)=' "$repo_dir/shell-$platform/.zshrc"; then
+        fail "shell-$platform still defines complex Mihomo aliases"
+    fi
 done
 
 for platform in macos linux; do
