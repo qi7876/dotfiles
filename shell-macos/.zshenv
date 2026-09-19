@@ -1,7 +1,11 @@
-export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="/opt/homebrew/opt/node@24/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
+typeset -U path PATH
+path=(
+    "$HOME/.local/bin"
+    "/opt/homebrew/opt/node@24/bin"
+    "$HOME/.cargo/bin"
+    "/opt/homebrew/opt/rustup/bin"
+    $path
+)
 
 export VISUAL='vim'
 export EDITOR='vim'

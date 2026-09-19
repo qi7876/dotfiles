@@ -50,4 +50,32 @@ for platform in macos linux; do
     done
 done
 
+macos_path=$(PATH="/usr/bin:/bin:$HOME/.local/bin:/usr/bin" zsh -f -c '
+    source "$1"
+    source "$1"
+    print -l -- $path
+' zsh "$repo_dir/shell-macos/.zshenv")
+expected_macos_path=$(printf '%s\n' \
+    "$HOME/.local/bin" \
+    /opt/homebrew/opt/node@24/bin \
+    "$HOME/.cargo/bin" \
+    /opt/homebrew/opt/rustup/bin \
+    /usr/bin \
+    /bin)
+test "$macos_path" = "$expected_macos_path" \
+    || fail "macOS path order or uniqueness is incorrect"
+
+linux_path=$(PATH="/usr/bin:/bin:$HOME/.cargo/bin:/usr/bin" zsh -f -c '
+    source "$1"
+    source "$1"
+    print -l -- $path
+' zsh "$repo_dir/shell-linux/.zshenv")
+expected_linux_path=$(printf '%s\n' \
+    "$HOME/.local/bin" \
+    "$HOME/.cargo/bin" \
+    /usr/bin \
+    /bin)
+test "$linux_path" = "$expected_linux_path" \
+    || fail "Linux path order or uniqueness is incorrect"
+
 printf '%s\n' 'Zsh behavior tests passed'

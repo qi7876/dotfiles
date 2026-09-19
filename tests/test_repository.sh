@@ -54,9 +54,15 @@ for platform in macos linux; do
         || fail "shell-$platform does not set idempotent FZF defaults"
 done
 
-grep -Fq 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"' "$repo_dir/shell-macos/.zshenv" \
+for platform in macos linux; do
+    grep -Fq 'typeset -U path PATH' "$repo_dir/shell-$platform/.zshenv" \
+        || fail "shell-$platform does not use the unique Zsh path array"
+    grep -Fq 'path=(' "$repo_dir/shell-$platform/.zshenv" \
+        || fail "shell-$platform does not initialize the Zsh path array"
+done
+grep -Fq '"/opt/homebrew/opt/rustup/bin"' "$repo_dir/shell-macos/.zshenv" \
     || fail "macOS rustup path is not initialized from .zshenv"
-grep -Fq 'export PATH="/opt/homebrew/opt/node@24/bin:$PATH"' "$repo_dir/shell-macos/.zshenv" \
+grep -Fq '"/opt/homebrew/opt/node@24/bin"' "$repo_dir/shell-macos/.zshenv" \
     || fail "macOS Node path is not initialized from .zshenv"
 grep -Fq 'eval "$(/opt/homebrew/bin/brew shellenv)"' "$repo_dir/shell-macos/.zprofile" \
     || fail "macOS Homebrew initialization is not using the fixed path"

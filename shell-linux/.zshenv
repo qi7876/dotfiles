@@ -1,5 +1,9 @@
 typeset -U path PATH
-path=("$HOME/.local/bin" "$HOME/.cargo/bin" $path)
+path=(
+    "$HOME/.local/bin"
+    "$HOME/.cargo/bin"
+    $path
+)
 
 export VISUAL='vim'
 export EDITOR='vim'
