@@ -16,6 +16,5 @@ export HTTP_PROXY="$http_proxy"
 export HTTPS_PROXY="$https_proxy"
 export NO_PROXY="$no_proxy"
 export MIHOMO_API='http://127.0.0.1:9090'
-export MIHOMO_CONFIG="$HOME/.config/mihomo/config.yaml"
 
 source "$HOME/.config/dotfiles/secrets.zsh"

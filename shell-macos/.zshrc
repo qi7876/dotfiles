@@ -114,16 +114,6 @@ mh-update-provider() {
     printf 'Updated: %s\n' "$provider"
 }
 
-mh-reload() {
-    : "${MIHOMO_CONFIG:?set MIHOMO_CONFIG in ~/.config/dotfiles/secrets.zsh}"
-    local payload
-    payload=$(jq -cn --arg path "$MIHOMO_CONFIG" '{path: $path}') || return $?
-    _mhcurl -X PUT -H 'Content-Type: application/json' \
-        -d "$payload" \
-        "$MIHOMO_API/configs?force=true" || return $?
-    printf '%s\n' 'mihomo config reloaded'
-}
-
 mh-restart() {
     _mhcurl -X POST -H 'Content-Type: application/json' -d '{}' "$MIHOMO_API/restart"
 }
