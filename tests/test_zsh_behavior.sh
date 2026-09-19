@@ -17,7 +17,7 @@ for platform in macos linux; do
         printf "%s\n" \
             "$http_proxy" "$https_proxy" "$no_proxy" \
             "$HTTP_PROXY" "$HTTPS_PROXY" "$NO_PROXY" \
-            "$MIHOMO_API" "$MIHOMO_CONFIG" "${MIHOMO_SECRET-unset}"
+            "$MIHOMO_API" "${MIHOMO_SECRET-unset}"
     ' zsh "$repo_dir/shell-$platform/.zshenv")
     expected_environment=$(printf '%s\n' \
         'http://127.0.0.1:7890' \
@@ -27,7 +27,6 @@ for platform in macos linux; do
         'http://127.0.0.1:7890' \
         'localhost,127.0.0.1,::1' \
         'http://127.0.0.1:9090' \
-        '/tmp/dotfiles-test-home/.config/mihomo/config.yaml' \
         'unset')
     test "$environment" = "$expected_environment" \
         || fail "shell-$platform does not provide the documented non-secret environment"
@@ -49,11 +48,10 @@ for platform in macos linux; do
         fail "shell-$platform ccat hid a cat failure"
     fi
 
-    for operation in update set reload; do
+    for operation in update set; do
         case "$operation" in
             update) expected='Updated: example' ;;
             set) expected='group -> proxy' ;;
-            reload) expected='mihomo config reloaded' ;;
         esac
 
         success_output=$(zsh -c '
@@ -62,7 +60,6 @@ for platform in macos linux; do
             case "$2" in
                 update) mh-update-provider example ;;
                 set) mh-set-group-proxy group proxy ;;
-                reload) MIHOMO_CONFIG=/tmp/config mh-reload ;;
             esac
         ' zsh "$config" "$operation" 2>/dev/null)
         test "$success_output" = "$expected" \
@@ -76,7 +73,6 @@ for platform in macos linux; do
             case "$2" in
                 update) mh-update-provider example ;;
                 set) mh-set-group-proxy group proxy ;;
-                reload) MIHOMO_CONFIG=/tmp/config mh-reload ;;
             esac
         ' zsh "$config" "$operation" >"$failure_output_file" 2>/dev/null; then
             fail "shell-$platform hid a failed $operation"
@@ -136,7 +132,7 @@ for platform in macos linux; do
         esac
     done
 
-    for operation in get set delay update reload; do
+    for operation in get set delay update; do
         marker_file="${TMPDIR:-/tmp}/dotfiles-mh-api-marker.$$"
         rm -f "$marker_file"
         trap 'rm -f "$marker_file"' EXIT HUP INT TERM
@@ -149,7 +145,6 @@ for platform in macos linux; do
                 set) mh-set-group-proxy group proxy ;;
                 delay) mh-delay-group group ;;
                 update) mh-update-provider provider ;;
-                reload) MIHOMO_CONFIG=/tmp/config mh-reload ;;
             esac
         ' zsh "$config" "$operation" >/dev/null 2>&1; then
             fail "shell-$platform hid a jq failure during $operation"

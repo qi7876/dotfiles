@@ -15,8 +15,8 @@ files themselves contain no runtime platform detection or shared fragments.
 - macOS: `brew install stow fzf zoxide jq tmux vim ripgrep`
 - Debian/Ubuntu: install the equivalent packages with `apt`
 
-Kitty and GitHub CLI configuration can be linked even when their applications
-are not installed.
+GitHub CLI configuration can be linked even when the application is not
+installed. Kitty configuration is deployed only on macOS.
 
 ## Install
 
@@ -35,8 +35,8 @@ Installation and removal always operate on the complete configuration set:
 ```
 
 Package arguments are intentionally unsupported. On macOS the scripts deploy
-`shell-macos`; on Linux they deploy `shell-linux`. Other kernels are rejected
-before the script creates links or local files.
+`shell-macos` and Kitty; on Linux they deploy `shell-linux` without Kitty.
+Other kernels are rejected before the script creates links or local files.
 
 Installation stops on conflicts instead of overwriting existing files. Use
 `DOTFILES_TARGET=/temporary/home` to operate on a different home directory.
@@ -49,8 +49,8 @@ removes them:
 - `~/.config/dotfiles/secrets.zsh`
 - `~/.ssh/config.local`
 
-The shared `.zshenv` files configure the local proxy endpoints and Mihomo config
-path with these defaults:
+The shared `.zshenv` files configure the local proxy endpoints and Mihomo API
+endpoint with these defaults:
 
 ```sh
 export http_proxy='http://127.0.0.1:7890'
@@ -60,7 +60,6 @@ export HTTP_PROXY="$http_proxy"
 export HTTPS_PROXY="$https_proxy"
 export NO_PROXY="$no_proxy"
 export MIHOMO_API='http://127.0.0.1:9090'
-export MIHOMO_CONFIG="$HOME/.config/mihomo/config.yaml"
 ```
 
 Only the secret must be added manually to

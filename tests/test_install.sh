@@ -49,6 +49,7 @@ case "$(realpath "$home_dir/.zshrc")" in
     *) fail "Darwin did not select shell-macos" ;;
 esac
 assert_managed "$home_dir/.config/git/config"
+assert_managed "$home_dir/.config/kitty/kitty.conf"
 assert_link "$home_dir/.ssh/config"
 
 secrets_file="$home_dir/.config/dotfiles/secrets.zsh"
@@ -85,13 +86,17 @@ test "$(cat "$conflict_home/.zshrc")" = 'keep me' || fail "conflicting file was 
 
 linux_home="$test_root/linux-home"
 linux_bin="$test_root/linux-bin"
-mkdir -p "$linux_home"
+mkdir -p "$linux_home/.config"
 fake_uname "$linux_bin" Linux
+stow --dir="$repo_dir" --target="$linux_home" kitty
+assert_link "$linux_home/.config/kitty"
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
 case "$(realpath "$linux_home/.zshrc")" in
     "$repo_dir/shell-linux/"*) ;;
     *) fail "Linux did not select shell-linux" ;;
 esac
+test ! -e "$linux_home/.config/kitty" \
+    || fail "Linux install retained the Kitty configuration"
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
 
 unsupported_home="$test_root/unsupported-home"

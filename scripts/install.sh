@@ -16,21 +16,30 @@ command -v stow >/dev/null 2>&1 || {
 
 kernel_name=$(uname -s)
 case "$kernel_name" in
-    Darwin) shell_package=shell-macos ;;
-    Linux) shell_package=shell-linux ;;
+    Darwin)
+        set -- shell-macos git tmux kitty vim gh agents ssh
+        obsolete_package=
+        ;;
+    Linux)
+        set -- shell-linux git tmux vim gh agents ssh
+        obsolete_package=kitty
+        ;;
     *)
         printf 'error: unsupported platform: %s\n' "$kernel_name" >&2
         exit 1
         ;;
 esac
 
-set -- "$shell_package" git tmux kitty vim gh agents ssh
-
 mkdir -p "$target"
 
 # Check the complete operation before creating links or local-only files.
 if ! preflight_output=$(stow --dir="$repo_dir" --target="$target" --no --restow "$@" 2>&1); then
     printf '%s\n' "$preflight_output" >&2
+    exit 1
+fi
+if [ -n "$obsolete_package" ] \
+    && ! cleanup_output=$(stow --dir="$repo_dir" --target="$target" --no --delete "$obsolete_package" 2>&1); then
+    printf '%s\n' "$cleanup_output" >&2
     exit 1
 fi
 
@@ -47,4 +56,7 @@ if [ ! -e "$ssh_local_file" ]; then
 fi
 chmod 600 "$secrets_file" "$ssh_local_file"
 
+if [ -n "$obsolete_package" ]; then
+    stow --dir="$repo_dir" --target="$target" --delete "$obsolete_package"
+fi
 stow --dir="$repo_dir" --target="$target" --restow "$@"

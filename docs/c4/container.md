@@ -18,7 +18,8 @@ C4Container
     Rel(scripts, home, "Creates missing private files once")
 ```
 
-The scripts select `shell-macos` or `shell-linux`, combine it with every shared
-package, and preflight the complete Stow operation. Platform detection never
-runs inside Zsh. GNU Stow owns only symbolic links; `secrets.zsh` and
-`config.local` remain ordinary local files.
+The scripts select `shell-macos` or `shell-linux`, combine it with the applicable
+packages, and preflight the complete Stow operation. Kitty is macOS-only; a
+Linux install also removes any Kitty links left by an older version. Platform
+detection never runs inside Zsh. GNU Stow owns only symbolic links;
+`secrets.zsh` and `config.local` remain ordinary local files.

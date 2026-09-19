@@ -16,14 +16,12 @@ command -v stow >/dev/null 2>&1 || {
 
 kernel_name=$(uname -s)
 case "$kernel_name" in
-    Darwin) shell_package=shell-macos ;;
-    Linux) shell_package=shell-linux ;;
+    Darwin) set -- shell-macos git tmux kitty vim gh agents ssh ;;
+    Linux) set -- shell-linux git tmux kitty vim gh agents ssh ;;
     *)
         printf 'error: unsupported platform: %s\n' "$kernel_name" >&2
         exit 1
         ;;
 esac
-
-set -- "$shell_package" git tmux kitty vim gh agents ssh
 
 stow --dir="$repo_dir" --target="$target" --delete "$@"
