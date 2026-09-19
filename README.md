@@ -5,6 +5,10 @@ Personal, cross-platform shell and development-tool configuration managed with
 truth for shared configuration; credentials and machine-specific values stay in
 local files outside Git.
 
+Zsh is maintained as two independent packages: `shell-macos` and `shell-linux`.
+The management scripts resolve the public `shell` package from `uname`; the Zsh
+files themselves contain no runtime platform detection or shared fragments.
+
 ## Prerequisites
 
 - Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, and Vim
@@ -29,6 +33,9 @@ Install or remove selected packages by passing their names:
 ./scripts/install.sh shell git tmux
 ./scripts/uninstall.sh shell git tmux
 ```
+
+On macOS, `shell` deploys `shell-macos`; on Linux, it deploys `shell-linux`.
+Other kernels are rejected before the script creates links or local files.
 
 Installation stops on conflicts instead of overwriting existing files. Use
 `DOTFILES_TARGET=/temporary/home` to operate on a different home directory.

@@ -10,6 +10,16 @@ command -v stow >/dev/null 2>&1 || {
     exit 1
 }
 
+kernel_name=$(uname -s)
+case "$kernel_name" in
+    Darwin) shell_package=shell-macos ;;
+    Linux) shell_package=shell-linux ;;
+    *)
+        printf 'error: unsupported platform: %s\n' "$kernel_name" >&2
+        exit 1
+        ;;
+esac
+
 if [ "$#" -eq 0 ]; then
     set -- $all_packages
 fi
@@ -23,6 +33,17 @@ for package in "$@"; do
             ;;
     esac
 done
+
+resolved_packages=''
+for package in "$@"; do
+    if [ "$package" = shell ]; then
+        resolved_package=$shell_package
+    else
+        resolved_package=$package
+    fi
+    resolved_packages="$resolved_packages $resolved_package"
+done
+set -- $resolved_packages
 
 mkdir -p "$target"
 

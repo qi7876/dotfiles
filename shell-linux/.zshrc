@@ -12,13 +12,9 @@ alias l='ls -ChF'
 alias kssh='kitten ssh'
 
 clip() {
-    if [[ "$(uname -s)" == Darwin && -z "$SSH_CONNECTION" ]]; then
-        pbcopy
-    else
-        local data
-        data="$(base64 | tr -d '\n')"
-        printf '\033]52;c;%s\033\\' "$data" > /dev/tty
-    fi
+    local data
+    data="$(base64 | tr -d '\n')"
+    printf '\033]52;c;%s\033\\' "$data" > /dev/tty
 }
 
 ccat() {
