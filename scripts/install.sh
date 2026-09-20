@@ -17,11 +17,11 @@ command -v stow >/dev/null 2>&1 || {
 kernel_name=$(uname -s)
 case "$kernel_name" in
     Darwin)
-        set -- shell-macos git tmux kitty vim gh agents ssh
+        set -- shell-macos git tmux kitty vim agents ssh
         obsolete_package=
         ;;
     Linux)
-        set -- shell-linux git tmux vim gh agents ssh
+        set -- shell-linux git tmux vim agents ssh
         obsolete_package=kitty
         ;;
     *)

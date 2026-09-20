@@ -41,9 +41,4 @@ if command -v kitty >/dev/null 2>&1; then
         || fail "Kitty SSH configuration could not be loaded"
 fi
 
-if command -v gh >/dev/null 2>&1; then
-    GH_CONFIG_DIR="$repo_dir/gh/.config/gh" gh config list >/dev/null \
-        || fail "GitHub CLI configuration could not be loaded"
-fi
-
 printf '%s\n' 'tool configuration tests passed'

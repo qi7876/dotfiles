@@ -8,6 +8,8 @@ fail() {
     exit 1
 }
 
+test ! -e "$repo_dir/gh" || fail "GitHub CLI configuration remains in the repository"
+
 git -C "$repo_dir" ls-files --cached --others --exclude-standard \
     | grep -Eq '(^|/)(hosts\.yml|id_[^/]+|known_hosts|\.zsh_history|viminfo|\.netrwhist|.*\.bak)$' \
     && fail "a private or runtime file is tracked"

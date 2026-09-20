@@ -16,8 +16,8 @@ command -v stow >/dev/null 2>&1 || {
 
 kernel_name=$(uname -s)
 case "$kernel_name" in
-    Darwin) set -- shell-macos git tmux kitty vim gh agents ssh ;;
-    Linux) set -- shell-linux git tmux kitty vim gh agents ssh ;;
+    Darwin) set -- shell-macos git tmux kitty vim agents ssh ;;
+    Linux) set -- shell-linux git tmux kitty vim agents ssh ;;
     *)
         printf 'error: unsupported platform: %s\n' "$kernel_name" >&2
         exit 1

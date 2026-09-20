@@ -50,6 +50,8 @@ case "$(realpath "$home_dir/.zshrc")" in
 esac
 assert_managed "$home_dir/.config/git/config"
 assert_managed "$home_dir/.config/kitty/kitty.conf"
+test ! -e "$home_dir/.config/gh" \
+    || fail "Darwin install deployed GitHub CLI configuration"
 assert_link "$home_dir/.ssh/config"
 
 secrets_file="$home_dir/.config/dotfiles/secrets.zsh"

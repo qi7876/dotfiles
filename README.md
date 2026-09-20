@@ -15,8 +15,7 @@ files themselves contain no runtime platform detection or shared fragments.
 - macOS: `brew install stow fzf zoxide jq tmux vim ripgrep`
 - Debian/Ubuntu: install the equivalent packages with `apt`
 
-GitHub CLI configuration can be linked even when the application is not
-installed. Kitty configuration is deployed only on macOS.
+Kitty configuration is deployed only on macOS.
 
 ## Install
 
