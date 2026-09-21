@@ -3,7 +3,6 @@ path=(
     "$HOME/.local/bin"
     "/opt/homebrew/opt/node@24/bin"
     "$HOME/.cargo/bin"
-    "/opt/homebrew/opt/rustup/bin"
     $path
 )
 
