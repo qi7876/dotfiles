@@ -14,23 +14,25 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 
-tmux -L "$tmux_label" -f "$repo_dir/tmux/.config/tmux/tmux.conf" \
+tmux -L "$tmux_label" -f "$repo_dir/.tmux.conf" \
     new-session -d || fail "tmux configuration could not be loaded"
 test "$(tmux -L "$tmux_label" show-options -gqv default-terminal)" = tmux-256color \
     || fail "tmux default terminal is incorrect"
 cleanup
 trap - EXIT HUP INT TERM
 
-vim -Nu "$repo_dir/vim/.config/vim/vimrc" -n -es \
+vim -Nu "$repo_dir/.vimrc" -n -es \
     '+if !empty(v:errmsg) | cquit | endif' '+qa!' \
     || fail "Vim configuration could not be loaded"
 SSH_CONNECTION='127.0.0.1 1 127.0.0.1 2' \
-    vim -Nu "$repo_dir/vim/.config/vim/vimrc" -n -es \
+    vim -Nu "$repo_dir/.vimrc" -n -es \
     '+if !exists("g:osc52_force_avail") || !empty(v:errmsg) | cquit | endif' '+qa!' \
     || fail "Vim SSH configuration could not be loaded"
 
-git config --file "$repo_dir/git/.config/git/config" --list >/dev/null \
+git config --file "$repo_dir/.gitconfig" --list >/dev/null \
     || fail "Git configuration could not be loaded"
+test "$(git config --file "$repo_dir/.gitconfig" --get credential.helper)" = store \
+    || fail "Git credential helper is incorrect"
 
 if command -v kitty >/dev/null 2>&1; then
     KITTY_CONFIG_PATH="$repo_dir/kitty/.config/kitty/kitty.conf" \

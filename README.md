@@ -1,9 +1,9 @@
 # dotfiles
 
-Personal, cross-platform shell and development-tool configuration managed with
-[GNU Stow](https://www.gnu.org/software/stow/). The repository is the source of
-truth for shared configuration; credentials and machine-specific values stay in
-local files outside Git.
+Personal, cross-platform shell and development-tool configuration installed
+with direct links and [GNU Stow](https://www.gnu.org/software/stow/). The
+repository is the source of truth for shared configuration; credentials and
+machine-specific values stay in local files outside Git.
 
 Zsh is maintained as two independent packages: `shell-macos` and `shell-linux`.
 The management scripts resolve the public `shell` package from `uname`; the Zsh
@@ -45,7 +45,7 @@ Installation stops on conflicts instead of overwriting existing files. Use
 The installer creates these files once with mode `600` and never overwrites or
 removes them:
 
-- `~/.config/git/credentials` (initially empty)
+- `~/.git-credentials` (initially empty)
 - `~/.secrets.zsh`
 - `~/.ssh/config.local`
 
@@ -68,10 +68,13 @@ Add the Mihomo secret to `~/.secrets.zsh` when authentication is enabled:
 export MIHOMO_SECRET=
 ```
 
-Git uses `credential-store` with `~/.config/git/credentials` as its explicit
-storage file. Add credentials there when needed; it starts empty and stores
-them as plain text. The installer keeps `~/.config/git` as a real directory so
-this file never points into the repository.
+Git uses `credential-store` with `~/.git-credentials`. Add credentials there
+when needed; it starts empty and stores them as plain text.
+
+The shared Git, Vim, and tmux files are linked from the repository root to
+`~/.gitconfig`, `~/.vimrc`, and `~/.tmux.conf`. The root `AGENTS.md` is linked
+into each existing `~/.codex`, `~/.dsh`, and `~/.claude` directory; the installer
+does not create those directories.
 
 Private SSH hosts belong in `~/.ssh/config.local`. SSH keys, `known_hosts`,
 histories, backups, and editor state are never tracked.

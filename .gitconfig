@@ -22,4 +22,4 @@
 [https]
 	proxy = http://127.0.0.1:7890
 [credential]
-	helper = store --file ~/.config/git/credentials
+	helper = store

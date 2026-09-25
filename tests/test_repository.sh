@@ -15,7 +15,7 @@ git -C "$repo_dir" ls-files --cached --others --exclude-standard \
     && fail "a private or runtime file is tracked"
 
 if rg -n 'gh auth git-credential|^\[credential "https://(github|gist)\.com"\]' \
-    "$repo_dir/git/.config/git/config"; then
+    "$repo_dir/.gitconfig"; then
     fail "Git configuration still uses a GitHub CLI credential helper"
 fi
 
