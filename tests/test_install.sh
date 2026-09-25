@@ -31,7 +31,7 @@ fake_uname() {
 }
 
 home_dir="$test_root/home"
-mkdir -p "$home_dir"
+mkdir -p "$home_dir/.codex" "$home_dir/.claude"
 darwin_bin="$test_root/darwin-bin"
 fake_uname "$darwin_bin" Darwin
 
@@ -48,15 +48,25 @@ case "$(realpath "$home_dir/.zshrc")" in
     "$repo_dir/shell-macos/"*) ;;
     *) fail "Darwin did not select shell-macos" ;;
 esac
-assert_managed "$home_dir/.config/git/config"
-assert_link "$home_dir/.config/git/config"
-test ! -L "$home_dir/.config/git" || fail "Git directory points into the repository"
+for config_file in .gitconfig .vimrc .tmux.conf; do
+    assert_link "$home_dir/$config_file"
+    test "$(readlink "$home_dir/$config_file")" = "$repo_dir/$config_file" \
+        || fail "$config_file does not link directly to the repository root"
+done
+for agent_dir in .codex .claude; do
+    assert_link "$home_dir/$agent_dir/AGENTS.md"
+    test "$(readlink "$home_dir/$agent_dir/AGENTS.md")" = "$repo_dir/AGENTS.md" \
+        || fail "$agent_dir/AGENTS.md does not link directly to the repository root"
+done
+test ! -e "$home_dir/.dsh" || fail "install created an absent agent directory"
+test ! -e "$home_dir/.config/agents" || fail "install deployed the old AGENTS path"
+test ! -e "$home_dir/.config/git" || fail "install deployed the old Git path"
 assert_managed "$home_dir/.config/kitty/kitty.conf"
 test ! -e "$home_dir/.config/gh" \
     || fail "Darwin install deployed GitHub CLI configuration"
 assert_link "$home_dir/.ssh/config"
 
-credentials_file="$home_dir/.config/git/credentials"
+credentials_file="$home_dir/.git-credentials"
 secrets_file="$home_dir/.secrets.zsh"
 ssh_local_file="$home_dir/.ssh/config.local"
 test -f "$credentials_file" || fail "Git credentials file was not created"
@@ -81,6 +91,14 @@ grep -q 'Host private-example' "$ssh_local_file" || fail "SSH local config was o
 PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/uninstall.sh"
 test ! -L "$home_dir/.zshrc" || fail "shell link was not removed"
 test ! -L "$home_dir/.ssh/config" || fail "SSH config link was not removed"
+for config_file in .gitconfig .vimrc .tmux.conf; do
+    test ! -e "$home_dir/$config_file" || fail "uninstall retained $config_file"
+done
+for agent_dir in .codex .claude; do
+    test ! -e "$home_dir/$agent_dir/AGENTS.md" \
+        || fail "uninstall retained $agent_dir/AGENTS.md"
+    test -d "$home_dir/$agent_dir" || fail "uninstall removed $agent_dir"
+done
 test -f "$secrets_file" || fail "uninstall removed the secrets file"
 test -f "$credentials_file" || fail "uninstall removed the Git credentials file"
 test -f "$ssh_local_file" || fail "uninstall removed the SSH local config"
@@ -97,9 +115,21 @@ printf '%s\n' "$conflict_output" | grep -q '.zshrc' \
     || fail "install hid the Stow conflict diagnostic"
 test "$(cat "$conflict_home/.zshrc")" = 'keep me' || fail "conflicting file was modified"
 
+agent_conflict_home="$test_root/agent-conflict-home"
+mkdir -p "$agent_conflict_home/.codex"
+printf '%s\n' 'keep me' >"$agent_conflict_home/.codex/AGENTS.md"
+if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$agent_conflict_home" \
+    "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
+    fail "install replaced an existing AGENTS.md"
+fi
+test ! -e "$agent_conflict_home/.gitconfig" \
+    || fail "agent conflict caused a partial install"
+test "$(cat "$agent_conflict_home/.codex/AGENTS.md")" = 'keep me' \
+    || fail "existing AGENTS.md was changed"
+
 linux_home="$test_root/linux-home"
 linux_bin="$test_root/linux-bin"
-mkdir -p "$linux_home/.config"
+mkdir -p "$linux_home/.config" "$linux_home/.dsh"
 fake_uname "$linux_bin" Linux
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
 case "$(realpath "$linux_home/.zshrc")" in
@@ -108,6 +138,8 @@ case "$(realpath "$linux_home/.zshrc")" in
 esac
 test ! -e "$linux_home/.config/kitty" \
     || fail "Linux install deployed the Kitty configuration"
+test "$(readlink "$linux_home/.dsh/AGENTS.md")" = "$repo_dir/AGENTS.md" \
+    || fail "Linux did not link AGENTS.md into an existing .dsh directory"
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
 
 unsupported_home="$test_root/unsupported-home"
