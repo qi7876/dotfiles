@@ -19,7 +19,8 @@ C4Container
 ```
 
 The scripts select `shell-macos` or `shell-linux`, combine it with the applicable
-packages, and preflight the complete Stow operation. Kitty is macOS-only; a
-Linux install also removes any Kitty links left by an older version. Platform
-detection never runs inside Zsh. GNU Stow owns only symbolic links;
-`secrets.zsh` and `config.local` remain ordinary local files.
+packages, and preflight the complete Stow operation. Kitty is macOS-only.
+Platform detection never runs inside Zsh. GNU Stow owns only symbolic links;
+`~/.secrets.zsh`, `~/.config/git/credentials`, and `config.local` remain
+ordinary local files. The Git directory is real so its private credentials
+file stays outside the repository.

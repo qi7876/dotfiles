@@ -1,7 +1,7 @@
 PROMPT='%F{4}%n@%m %F{5}%~%f
 %F{2}%(!.#.$)%f '
 
-export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
+export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -40,7 +40,7 @@ source <(fzf --zsh)
 eval "$(zoxide init zsh)"
 
 _mhcurl() {
-    : "${MIHOMO_API:?set MIHOMO_API in ~/.config/dotfiles/secrets.zsh}"
+    : "${MIHOMO_API:?set MIHOMO_API in ~/.secrets.zsh}"
     if [[ -n "${MIHOMO_SECRET:-}" ]]; then
         command curl -fsS -H "Authorization: Bearer $MIHOMO_SECRET" "$@"
     else

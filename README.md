@@ -45,7 +45,8 @@ Installation stops on conflicts instead of overwriting existing files. Use
 The installer creates these files once with mode `600` and never overwrites or
 removes them:
 
-- `~/.config/dotfiles/secrets.zsh`
+- `~/.config/git/credentials` (initially empty)
+- `~/.secrets.zsh`
 - `~/.ssh/config.local`
 
 The shared `.zshenv` files configure the local proxy endpoints and Mihomo API
@@ -61,16 +62,19 @@ export NO_PROXY="$no_proxy"
 export MIHOMO_API='http://127.0.0.1:9090'
 ```
 
-Only the secret must be added manually to
-`~/.config/dotfiles/secrets.zsh` when Mihomo authentication is enabled:
+Add the Mihomo secret to `~/.secrets.zsh` when authentication is enabled:
 
 ```sh
 export MIHOMO_SECRET=
 ```
 
+Git uses `credential-store` with `~/.config/git/credentials` as its explicit
+storage file. Add credentials there when needed; it starts empty and stores
+them as plain text. The installer keeps `~/.config/git` as a real directory so
+this file never points into the repository.
+
 Private SSH hosts belong in `~/.ssh/config.local`. SSH keys, `known_hosts`,
-GitHub CLI authentication, histories, backups, and editor state are never
-tracked.
+histories, backups, and editor state are never tracked.
 
 ## Development
 

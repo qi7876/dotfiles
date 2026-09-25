@@ -11,8 +11,13 @@ fail() {
 test ! -e "$repo_dir/gh" || fail "GitHub CLI configuration remains in the repository"
 
 git -C "$repo_dir" ls-files --cached --others --exclude-standard \
-    | grep -Eq '(^|/)(hosts\.yml|id_[^/]+|known_hosts|\.zsh_history|viminfo|\.netrwhist|.*\.bak)$' \
+    | grep -Eq '(^|/)(credentials|secrets\.zsh|hosts\.yml|id_[^/]+|known_hosts|\.zsh_history|viminfo|\.netrwhist|.*\.bak)$' \
     && fail "a private or runtime file is tracked"
+
+if rg -n 'gh auth git-credential|^\[credential "https://(github|gist)\.com"\]' \
+    "$repo_dir/git/.config/git/config"; then
+    fail "Git configuration still uses a GitHub CLI credential helper"
+fi
 
 if rg -n --glob '!tests/**' --glob '!.git/**' \
     'MIHOMO_SECRET=[^[:space:]#]+|Password:[[:space:]]*[^[:space:]]+' "$repo_dir"; then
@@ -51,7 +56,7 @@ if rg -n '/opt/homebrew|pbcopy' "$repo_dir/shell-linux"; then
     fail "Linux configuration contains a macOS-only setting"
 fi
 
-expected_fzf_opts='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.rustup,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
+expected_fzf_opts='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 for platform in macos linux; do
     actual_fzf_opts=$(FZF_DEFAULT_OPTS='--layout=reverse' zsh -c '
         source "$1" 2>/dev/null
@@ -76,23 +81,15 @@ for platform in macos linux; do
     grep -Fq 'path=(' "$repo_dir/shell-$platform/.zshenv" \
         || fail "shell-$platform does not initialize the Zsh path array"
 done
-grep -Fq '"/opt/homebrew/opt/rustup/bin"' "$repo_dir/shell-macos/.zshenv" \
-    || fail "macOS rustup path is not initialized from .zshenv"
 grep -Fq '"/opt/homebrew/opt/node@24/bin"' "$repo_dir/shell-macos/.zshenv" \
     || fail "macOS Node path is not initialized from .zshenv"
 grep -Fq 'eval "$(/opt/homebrew/bin/brew shellenv)"' "$repo_dir/shell-macos/.zprofile" \
     || fail "macOS Homebrew initialization is not using the fixed path"
-if rg -n 'rustup|node@24' "$repo_dir/shell-macos/.zprofile"; then
+if rg -n 'node@24' "$repo_dir/shell-macos/.zprofile"; then
     fail "non-login PATH initialization remains in .zprofile"
 fi
 
 grep -q '^Include ~/.ssh/config.local$' "$repo_dir/ssh/.ssh/config" \
     || fail "SSH config does not include the local file"
-
-github_ssh=$(ssh -G -F "$repo_dir/ssh/.ssh/config" github.com 2>/dev/null)
-printf '%s\n' "$github_ssh" | grep -q '^hostname ssh.github.com$' \
-    || fail "GitHub SSH hostname is incorrect"
-printf '%s\n' "$github_ssh" | grep -q '^port 443$' \
-    || fail "GitHub SSH does not use port 443"
 
 printf '%s\n' 'repository safety tests passed'

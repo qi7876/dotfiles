@@ -49,29 +49,40 @@ case "$(realpath "$home_dir/.zshrc")" in
     *) fail "Darwin did not select shell-macos" ;;
 esac
 assert_managed "$home_dir/.config/git/config"
+assert_link "$home_dir/.config/git/config"
+test ! -L "$home_dir/.config/git" || fail "Git directory points into the repository"
 assert_managed "$home_dir/.config/kitty/kitty.conf"
 test ! -e "$home_dir/.config/gh" \
     || fail "Darwin install deployed GitHub CLI configuration"
 assert_link "$home_dir/.ssh/config"
 
-secrets_file="$home_dir/.config/dotfiles/secrets.zsh"
+credentials_file="$home_dir/.config/git/credentials"
+secrets_file="$home_dir/.secrets.zsh"
 ssh_local_file="$home_dir/.ssh/config.local"
+test -f "$credentials_file" || fail "Git credentials file was not created"
+test ! -s "$credentials_file" || fail "Git credentials file is not empty by default"
 test -f "$secrets_file" || fail "secrets file was not created"
 test -f "$ssh_local_file" || fail "SSH local config was not created"
 test -d "$home_dir/.local/state/vim" || fail "Vim state directory was not created"
 test "$(stat -f '%Lp' "$secrets_file" 2>/dev/null || stat -c '%a' "$secrets_file")" = 600 \
     || fail "secrets file permissions are not 600"
+test "$(stat -f '%Lp' "$credentials_file" 2>/dev/null || stat -c '%a' "$credentials_file")" = 600 \
+    || fail "Git credentials file permissions are not 600"
 
 printf '%s\n' 'export TEST_SECRET=preserved' >"$secrets_file"
+printf '%s\n' 'https://test-user:test-token@example.com' >"$credentials_file"
 printf '%s\n' 'Host private-example' >"$ssh_local_file"
 PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/install.sh"
 grep -q 'TEST_SECRET=preserved' "$secrets_file" || fail "secrets file was overwritten"
+test "$(cat "$credentials_file")" = 'https://test-user:test-token@example.com' \
+    || fail "Git credentials file was overwritten"
 grep -q 'Host private-example' "$ssh_local_file" || fail "SSH local config was overwritten"
 
 PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/uninstall.sh"
 test ! -L "$home_dir/.zshrc" || fail "shell link was not removed"
 test ! -L "$home_dir/.ssh/config" || fail "SSH config link was not removed"
 test -f "$secrets_file" || fail "uninstall removed the secrets file"
+test -f "$credentials_file" || fail "uninstall removed the Git credentials file"
 test -f "$ssh_local_file" || fail "uninstall removed the SSH local config"
 test -d "$home_dir/.local/state/vim" || fail "uninstall removed the Vim state directory"
 
@@ -90,15 +101,13 @@ linux_home="$test_root/linux-home"
 linux_bin="$test_root/linux-bin"
 mkdir -p "$linux_home/.config"
 fake_uname "$linux_bin" Linux
-stow --dir="$repo_dir" --target="$linux_home" kitty
-assert_link "$linux_home/.config/kitty"
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
 case "$(realpath "$linux_home/.zshrc")" in
     "$repo_dir/shell-linux/"*) ;;
     *) fail "Linux did not select shell-linux" ;;
 esac
 test ! -e "$linux_home/.config/kitty" \
-    || fail "Linux install retained the Kitty configuration"
+    || fail "Linux install deployed the Kitty configuration"
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
 
 unsupported_home="$test_root/unsupported-home"
@@ -110,7 +119,7 @@ if PATH="$unsupported_bin:$PATH" DOTFILES_TARGET="$unsupported_home" \
     fail "unsupported platform was accepted"
 fi
 test ! -e "$unsupported_home/.zshrc" || fail "unsupported platform created a shell link"
-test ! -e "$unsupported_home/.config/dotfiles/secrets.zsh" \
+test ! -e "$unsupported_home/.secrets.zsh" \
     || fail "unsupported platform created a local secrets file"
 
 argument_home="$test_root/argument-home"
@@ -119,7 +128,7 @@ if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$argument_home" \
     "$repo_dir/scripts/install.sh" git >/dev/null 2>&1; then
     fail "install accepted a package argument"
 fi
-test ! -e "$argument_home/.config/dotfiles/secrets.zsh" \
+test ! -e "$argument_home/.secrets.zsh" \
     || fail "argument rejection happened after local file creation"
 if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$argument_home" \
     "$repo_dir/scripts/uninstall.sh" git >/dev/null 2>&1; then

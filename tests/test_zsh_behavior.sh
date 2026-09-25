@@ -164,7 +164,6 @@ expected_macos_path=$(printf '%s\n' \
     "$HOME/.local/bin" \
     /opt/homebrew/opt/node@24/bin \
     "$HOME/.cargo/bin" \
-    /opt/homebrew/opt/rustup/bin \
     /usr/bin \
     /bin)
 test "$macos_path" = "$expected_macos_path" \

@@ -22,4 +22,6 @@ export NO_PROXY="$no_proxy"
 
 export MIHOMO_API='http://127.0.0.1:9090'
 
-source "$HOME/.config/dotfiles/secrets.zsh"
+if [[ -f "$HOME/.secrets.zsh" ]]; then
+    source "$HOME/.secrets.zsh"
+fi
