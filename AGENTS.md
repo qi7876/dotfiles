@@ -51,6 +51,30 @@ TDD可以和C4模型结合使用：
 
 采用Trunk-Based Development风格：以`main`作为唯一长期主线，开发工作通过短生命周期分支完成，并通过Pull Request、CI和Code Review合入主线。
 
+### Commit Message
+
+长期历史中的commit推荐采用：
+
+```text
+<subsystem>: <imperative description>
+```
+
+例如：
+
+```text
+kv-cache: compact fragmented blocks
+scheduler: avoid scanning inactive requests
+attention: handle empty sequences
+cuda: fuse rotary embedding into attention kernel
+docs: explain paged cache layout
+```
+
+优先写出受影响的模块，因为维护者通常更关心“改了哪里、改了什么”，而不是对修改进行抽象分类。
+
+描述应简洁、具体，并使用动作形式。
+
+如果修改原因、约束或设计决策不明显，应在commit body中说明为什么这样修改，而不是重复代码做了什么。
+
 ### 分支
 
 `main`应始终保持可构建、可测试，理想情况下可直接发布。
@@ -93,6 +117,8 @@ git rebase origin/main
 
 PR是代码审查和协作的主要单位，branch只是临时工作空间。
 
+如果仅在本地开发，则可在分支任务完成后，直接在本地进行squash merge。
+
 ### 合并策略
 
 一般项目推荐默认使用Squash Merge：
@@ -110,39 +136,13 @@ address review
 lint
 ```
 
-等临时commit不需要进入长期历史。
-
-如果仅在本地开发，则可在分支任务完成后，直接在本地进行squash merge，commit信息中要说明merge的是哪个分支，例如：
+等临时commit不需要进入长期历史，commit信息中要说明merge的是哪个分支，例如：
 
 ```text
 merge from <branch name>: <subsystem>: <imperative description>
 ```
 
 合并结束后，清理远程和本地的相关分支，以及下文提到的文档。
-
-### Commit Message
-
-长期历史中的commit推荐采用：
-
-```text
-<subsystem>: <imperative description>
-```
-
-例如：
-
-```text
-kv-cache: compact fragmented blocks
-scheduler: avoid scanning inactive requests
-attention: handle empty sequences
-cuda: fuse rotary embedding into attention kernel
-docs: explain paged cache layout
-```
-
-优先写出受影响的模块，因为维护者通常更关心“改了哪里、改了什么”，而不是对修改进行抽象分类。
-
-描述应简洁、具体，并使用动作形式。
-
-如果修改原因、约束或设计决策不明显，应在commit body中说明为什么这样修改，而不是重复代码做了什么。
 
 ## 文档
 

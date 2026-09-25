@@ -1,7 +1,6 @@
 syntax enable
 filetype plugin indent on
 
-set viminfofile=~/.local/state/vim/viminfo
 let g:netrw_dirhistmax = 0
 set scrolloff=8
 set mouse=a
