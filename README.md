@@ -78,5 +78,15 @@ histories, backups, and editor state are never tracked.
 
 ## Development
 
-Run all local checks with `./scripts/check.sh`. Architecture notes are under
-`docs/c4/`, and project status is maintained in `docs/collab/`.
+Run all local checks with `./scripts/check.sh`. System context and container
+diagrams are under `docs/c4/`.
+
+## Status
+
+- macOS and Linux use separate Zsh packages; Kitty is installed on macOS only.
+- Install, uninstall, and local checks run against the complete package set.
+- The repository has a GitHub remote and no remote CI workflow.
+
+## Next
+
+- Add new tools as independent Stow packages when needed.
