@@ -94,7 +94,7 @@ git rebase origin/main
 
 ### Pull Request
 
-在分支建立后，就应该创建 Draft PR，并持续维护 PR description，等真正准备好 review 时，再把 Draft 标记为 Ready for review。
+在分支建立后，就应该创建 Draft PR，后续在工作过程中持续提交并推送更改，同时维护 PR description，等真正准备好 review 时，再把 Draft 标记为 Ready for review。
 
 PR 是代码审查和协作的主要单位，branch 只是临时工作空间。每个 PR 应表示一个清晰、独立的逻辑修改，并尽量保持较小规模。合入前通常要求：
 
