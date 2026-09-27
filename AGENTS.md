@@ -1,59 +1,55 @@
-## C4
+## Architecture
 
-软件开发中的C4模型静态图：
+少维护、按需补充，不要把画图体系本身变成负担。
 
-1. System Context：这个系统是谁在用（用户、admin）、和哪些外部系统交互（payment、email）？
-1. Container：System由哪些可执行或可运行的主要单元组成？它们之间如何通信以及主要的技术栈？
-1. Component：Container内部由哪些具有明确职责和接口的内部构件组成？
-1. Code：具体的代码结构？
+C4 模型包含四个核心抽象层级：
 
-实际使用中，我们通常维护C1和C2，只对于某些重要的Container维护C3，C4由于变化太快，不手动维护，直接使用代码表示
+1. System Context：这个系统是谁在用（user、admin），以及和哪些外部系统交互（payment、email）？
+1. Container：System 由哪些可执行或可运行的主要单元组成？它们之间如何通信，主要技术栈是什么？
+1. Component：Container 内部由哪些具有明确职责和接口的构件组成？
+1. Code：具体的代码结构。
 
-C4还推荐我们使用以下几种图来更好的设计：
+实际使用中，通常只长期维护 C1 和 C2；只为真正重要、复杂的 Container 补充 C3；C4 变化太快，通常直接以代码本身为准。
 
-1. Sequence Diagram：具体流程中谁先做什么，然后谁又做了什么？
-2. Deployment Diagram：实际部署系统时跑在哪里（VM、K8S、DB、firewall等等）？
-3. System Landscape Diagram：如果在项目外还存在很多系统，当前项目的位置？
+C4 还提供一些按需使用的视图：
 
-此外，我们还常用：
+1. Dynamic Diagram：某个 use case 中，各架构元素运行时如何交互？
+1. Deployment Diagram：系统实际部署在哪里，以及软件单元与 VM、K8S、DB、网络等基础设施如何对应？
+1. System Landscape Diagram：当组织中存在多个系统时，展示当前系统在整体系统版图中的位置和关系。
 
-1. State Machine Diagram：对象所处的状态，以及如何随时间转换？
-1. Entity–Relationship Diagram：侧重数据结构，有哪些实体、实体有哪些属性、实体之间是什么关系？
-1. Flowchart：复杂算法或业务流程的控制逻辑？
-1. Data Flow Diagram：数据从哪来，经过什么处理，流向哪里？
+下面这些不属于 C4，但可以在需要时补充，用来解决具体问题：
 
-这些设计文档应该放在项目的`docs/c4/`目录下。
+1. State Machine Diagram：描述状态及状态转换，适合具有明显生命周期的对象、任务、订单、协议等。
+1. Entity–Relationship Diagram：描述数据实体、属性及关系，适合数据库和领域数据模型。
+1. Flowchart：描述复杂算法或业务逻辑中的控制流。
+1. Data Flow Diagram：描述数据从哪里来、经过什么处理、最终流向哪里。
 
-## Test-driven development
+这些架构和设计文档统一放在项目的`docs/architecture/`目录下。
 
-我们使用测试驱动的开发：先通过测试描述你希望代码具有什么行为，再写最少的实现让这个行为成立，最后在测试保护下重构。
+## Test
 
-TDD可以迫使我们站在调用者的角度思考，怎么去设计接口，同时为了实现良好的测试，也迫使我们设计低耦合的代码（同时也要注意，大量依赖Mock可能会得到很脆弱的设计）。
+在项目设计阶段和开发初期，不应该过早围绕测试来设计系统，否则容易导致过度拆分、降低迭代速度，并增加维护负担。
 
-TDD的流程可以分为三步：
+当软件初见雏形、设计基本稳定、主要流程已经跑通并能看到结果后，再逐步建立测试体系。测试应围绕稳定的外部行为和关键不变量，而不是实现细节或覆盖率数字。
 
-1. Red：写测试，这时由于没有代码实现所以无法通过
-1. Green：写足够少的代码（不是低质量代码），通过测试
-1. Refactor：再考虑代码结构、命名、抽象、错误处理等问题，在测试的保护下完成重构。
+实际工程中，应优先选择快速、稳定、维护成本低的测试：
 
-TDD可以和C4模型结合使用：
+1. 纯逻辑和算法优先使用 unit、property 或 differential test
+1. 模块协作使用 integration test，E2E 只覆盖关键路径
+1. 尽量少用 mock，只隔离难以控制的外部依赖或异常场景
+1. 修复 bug 或行为已经明确时适合 test-first；探索性开发和性能优化不必强制 TDD
 
-1. C4: Unit tests
-1. C3: Componet tests
-1. C2: Integration tests
-1. C1: E2E tests
-
-对于C1，我们一般用自然语言描述behavior specifications，配合Sequence Diagram。然后C2描述behavior/protocol specifications，并且可以写一些测试。然后深入到C3/C4配合TDD进行实现，再回到C2补全测试，最后回到C1补上E2E测试。
+核心原则可以概括为：测试稳定的行为和重要的不变量，而不是实现细节；把测试放在能以最低成本提供足够信心的最低层级。
 
 ## Git
 
-任何项目接手后都应该检查是否初始化了git，如果没有，则需要主动初始化，以项目当前状态作为baseline进行后续开发，方便代码回滚与版本管理。
+任何项目接手后都应该检查是否初始化了 git，如果没有，则需要主动初始化，以项目当前状态作为 baseline 进行后续开发，方便代码回滚与版本管理。
 
-采用Trunk-Based Development风格：以`main`作为唯一长期主线，开发工作通过短生命周期分支完成，并通过Pull Request、CI和Code Review合入主线。
+采用 Trunk-Based Development 风格：以`main`作为唯一长期主线，开发工作通过短生命周期分支完成，并通过 Pull Request、CI 和 Code Review 合入主线。
 
 ### Commit Message
 
-长期历史中的commit推荐采用：
+长期历史中的 commit 推荐采用：
 
 ```text
 <subsystem>: <imperative description>
@@ -69,17 +65,11 @@ cuda: fuse rotary embedding into attention kernel
 docs: explain paged cache layout
 ```
 
-优先写出受影响的模块，因为维护者通常更关心“改了哪里、改了什么”，而不是对修改进行抽象分类。
-
-描述应简洁、具体，并使用动作形式。
-
-如果修改原因、约束或设计决策不明显，应在commit body中说明为什么这样修改，而不是重复代码做了什么。
+优先写出受影响的模块，因为维护者通常更关心“改了哪里、改了什么”，而不是对修改进行抽象分类。描述应简洁、具体，并使用动作形式。如果修改原因、约束或设计决策不明显，应在 commit body 中说明为什么这样修改，而不是重复代码做了什么。
 
 ### 分支
 
-`main`应始终保持可构建、可测试，理想情况下可直接发布。
-
-开发新功能或修复问题时，从最新的`main`创建短期分支：
+`main`应始终保持可构建、可测试，理想情况下可直接发布。开发新功能或修复问题时，从最新的`main`创建短期分支：
 
 ```text
 feat/kv-cache-packing
@@ -93,72 +83,39 @@ refactor/scheduler
 
 ### 同步主线
 
-个人独占的开发分支优先使用rebase：
+个人独占的开发分支优先使用 rebase：
 
 ```bash
 git fetch origin
 git rebase origin/main
 ```
 
-这样可以避免为了同步`main`产生无意义的merge commit。
-
-不要rebase已经被多人依赖的公共历史。多人共享分支应谨慎重写历史。
+这样可以避免为了同步`main`产生无意义的 merge commit。不要 rebase 已经被多人依赖的公共历史。多人共享分支应谨慎重写历史。
 
 ### Pull Request
 
-每个PR应表示一个清晰、独立的逻辑修改，并尽量保持较小规模。
+在分支建立后，就应该创建 Draft PR，并持续维护 PR description，等真正准备好 review 时，再把 Draft 标记为 Ready for review。
 
-合入前通常要求：
+PR 是代码审查和协作的主要单位，branch 只是临时工作空间。每个 PR 应表示一个清晰、独立的逻辑修改，并尽量保持较小规模。合入前通常要求：
 
-- CI通过；
-- Code Review通过；
-- 与最新`main`不存在冲突；
-- PR描述说明修改目的和关键设计决策。
+- CI 通过
+- Code Review 通过
+- 与最新`main`不存在冲突
+- PR 描述说明修改目的和关键设计决策
 
-PR是代码审查和协作的主要单位，branch只是临时工作空间。
-
-如果仅在本地开发，则可在分支任务完成后，直接在本地进行squash merge。
-
-### 合并策略
-
-一般项目推荐默认使用Squash Merge：
-
-```text
-1 PR = 1 logical change = 1 commit on main
-```
-
-开发分支中的：
-
-```text
-WIP
-fix test
-address review
-lint
-```
-
-等临时commit不需要进入长期历史，commit信息中要说明merge的是哪个分支，例如：
-
-```text
-merge from <branch name>: <subsystem>: <imperative description>
-```
-
-合并结束后，清理远程和本地的相关分支，以及本地的分支文档。
+合并时使用 squash merge，保证：1 PR = 1 logical change = 1 commit on main。开发分支中的`WIP, fix test, address review, lint`等临时 commit 不需要进入长期历史。合并结束后，清理本地的相关分支。
 
 ## 文档
 
-我们需要编写简明扼要的README文档来说明当前项目的简介、开发状态、后续计划，并持续维护。
-
-对于每个开发分支，在本地维护文档，说明开发意图、进度和后续计划。分支文档以分支名命名，放置在项目的`docs/branch/`目录下；将该目录加入项目的`.gitignore`，不要提交到远程仓库。
-
-PR描述用于向协作者共享开发目的、关键设计决策、验证结果和剩余事项，并随进展更新。分支被squash merge后，清理本地分支文档。
+维护 README 文档来说明当前项目的简介、使用指南、开发状态、后续计划，并持续维护。
 
 ## CI/CD
 
-在没有remote仓库的情况下，只维护本地CI。
+在没有 remote 仓库的情况下，只维护本地 CI。
 
-如果存在remote仓库，检查项目是否已设置Github Action等远程CI，如果有，则维护，如果没有，则不维护，只在后续我们主动提出添加远程CI后才初始化并维护。
+如果存在 remote 仓库，检查项目是否已设置 Github Action 等远程 CI，如果有，则维护，如果没有，则不维护，只在后续我们主动提出添加远程 CI 后才初始化并维护。
 
-CD风险较大，一般不维护，由我们手动发布。
+CD 风险较大，一般不维护，由我们手动发布。
 
 ## Coding
 
