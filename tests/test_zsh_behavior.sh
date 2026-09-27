@@ -11,6 +11,15 @@ fail() {
 for platform in macos linux; do
     config="$repo_dir/shell-$platform/.zshrc"
 
+    fzf_options=$(FZF_DEFAULT_OPTS='--layout=reverse' zsh -c '
+        source "$1" 2>/dev/null
+        source "$1" 2>/dev/null
+        printf "%s" "$FZF_DEFAULT_OPTS"
+    ' zsh "$config")
+    expected_fzf_options='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
+    test "$fzf_options" = "$expected_fzf_options" \
+        || fail "shell-$platform changed FZF options after repeated loading"
+
     environment=$(HOME=/tmp/dotfiles-test-home zsh -f -c '
         unset MIHOMO_SECRET
         source "$1" 2>/dev/null

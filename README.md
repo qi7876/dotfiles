@@ -81,8 +81,9 @@ histories, backups, and editor state are never tracked.
 
 ## Development
 
-Run all local checks with `./scripts/check.sh`. System context and container
-diagrams are under `docs/c4/`.
+Run all local checks with `./scripts/check.sh`. The maintained architecture
+views are the [system context](docs/architecture/system-context.md) and
+[container](docs/architecture/container.md) diagrams.
 
 ## Status
 
