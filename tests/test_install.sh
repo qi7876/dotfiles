@@ -89,7 +89,7 @@ test ! -e "$home_dir/.config/gh" \
     || fail "Darwin install deployed GitHub CLI configuration"
 assert_link "$home_dir/.ssh/config"
 
-credentials_file="$home_dir/.git-credentials"
+credentials_file="$home_dir/.config/git/credentials"
 secrets_file="$home_dir/.secrets.zsh"
 ssh_local_file="$home_dir/.ssh/config.local"
 test -f "$credentials_file" || fail "Git credentials file was not created"
@@ -105,6 +105,13 @@ test "$(stat -f '%Lp' "$credentials_file" 2>/dev/null || stat -c '%a' "$credenti
     || fail "Git credentials file permissions are not 600"
 test "$(stat -f '%Lp' "$ssh_local_file" 2>/dev/null || stat -c '%a' "$ssh_local_file")" = 600 \
     || fail "SSH local config permissions are not 600"
+printf 'protocol=https\nhost=example.test\nusername=test-user\npassword=test-password\n\n' \
+    | HOME="$home_dir" XDG_CONFIG_HOME="$home_dir/.config" GIT_CONFIG_NOSYSTEM=1 \
+        git -C "$home_dir" credential approve
+test "$(cat "$credentials_file")" = 'https://test-user:test-password@example.test' \
+    || fail "Git credential helper did not use the XDG credentials file"
+test ! -e "$home_dir/.git-credentials" \
+    || fail "Git credential helper created the legacy credentials file"
 
 printf '%s\n' 'export TEST_SECRET=preserved' >"$secrets_file"
 printf '%s\n' 'https://test-user:test-token@example.com' >"$credentials_file"

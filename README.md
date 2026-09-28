@@ -50,7 +50,7 @@ migrated; remove them manually before using the new layout.
 The installer creates these files empty when missing, sets mode `600`, and
 never overwrites or removes their contents:
 
-- `~/.git-credentials`
+- `~/.config/git/credentials`
 - `~/.secrets.zsh`
 - `~/.ssh/config.local`
 
@@ -73,8 +73,8 @@ Add the Mihomo secret to `~/.secrets.zsh` when authentication is enabled:
 export MIHOMO_SECRET=
 ```
 
-Git uses `credential-store` with `~/.git-credentials`. Add credentials there
-when needed; it starts empty and stores them as plain text.
+Git uses `credential-store` with `~/.config/git/credentials`. Add credentials
+there when needed; it starts empty and stores them as plain text.
 
 Git, tmux, and Neovim are linked to `~/.config/git/config`,
 `~/.config/tmux/tmux.conf`, and `~/.config/nvim/init.lua`. Kitty files are

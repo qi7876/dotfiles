@@ -45,7 +45,7 @@ create_link() {
 }
 
 mkdir -p "$target"
-credentials_file="$target/.git-credentials"
+credentials_file="$target/.config/git/credentials"
 secrets_file="$target/.secrets.zsh"
 ssh_local_file="$target/.ssh/config.local"
 for local_file in "$credentials_file" "$secrets_file" "$ssh_local_file"; do

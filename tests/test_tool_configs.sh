@@ -31,7 +31,8 @@ SSH_CONNECTION='127.0.0.1 1 127.0.0.1 2' \
 
 git config --file "$repo_dir/git/config" --list >/dev/null \
     || fail "Git configuration could not be loaded"
-test "$(git config --file "$repo_dir/git/config" --get credential.helper)" = store \
+test "$(git config --file "$repo_dir/git/config" --get credential.helper)" = \
+    'store --file ~/.config/git/credentials' \
     || fail "Git credential helper is incorrect"
 
 if command -v kitty >/dev/null 2>&1; then
