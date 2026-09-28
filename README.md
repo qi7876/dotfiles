@@ -1,9 +1,9 @@
 # dotfiles
 
 Personal, cross-platform shell and development-tool configuration installed
-with direct links and [GNU Stow](https://www.gnu.org/software/stow/). The
-repository is the source of truth for shared configuration; credentials and
-machine-specific values stay in local files outside Git.
+with individual symbolic links. The repository is the source of truth for
+shared configuration; credentials and machine-specific values stay in local
+files outside Git.
 
 Zsh is maintained as two independent packages: `shell-macos` and `shell-linux`.
 The management scripts resolve the public `shell` package from `uname`; the Zsh
@@ -11,8 +11,8 @@ files themselves contain no runtime platform detection or shared fragments.
 
 ## Prerequisites
 
-- Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, Neovim, ripgrep, and OpenSSH
-- macOS: `brew install stow fzf zoxide jq tmux neovim ripgrep`
+- Git, Zsh, fzf, zoxide, jq, tmux, Neovim, ripgrep, and OpenSSH
+- macOS: `brew install fzf zoxide jq tmux neovim ripgrep`
 - Debian/Ubuntu: install the equivalent packages with `apt`
 
 Kitty configuration is deployed only on macOS.
@@ -37,8 +37,11 @@ Package arguments are intentionally unsupported. On macOS the scripts deploy
 `shell-macos` and Kitty; on Linux they deploy `shell-linux` without Kitty.
 Other kernels are rejected before the script creates links or local files.
 
+The installer creates real directories and links each managed file separately.
 Installation stops on conflicts instead of overwriting existing files. Use
 `DOTFILES_TARGET=/temporary/home` to operate on a different home directory.
+Existing directory links and former Git or tmux home-directory links are not
+migrated; remove them manually before using the new layout.
 
 ## Local configuration
 
@@ -71,9 +74,9 @@ export MIHOMO_SECRET=
 Git uses `credential-store` with `~/.git-credentials`. Add credentials there
 when needed; it starts empty and stores them as plain text.
 
-The shared Git and tmux files are linked from the repository root to
-`~/.gitconfig` and `~/.tmux.conf`. Neovim's `init.lua` is linked inside the
-ordinary `~/.config/nvim` directory, which can also hold local files. The root
+Git, tmux, and Neovim are linked to `~/.config/git/config`,
+`~/.config/tmux/tmux.conf`, and `~/.config/nvim/init.lua`. Kitty files are
+linked individually inside `~/.config/kitty` on macOS. The root
 `AGENTS.md` is linked into each existing `~/.codex`, `~/.dsh`, and `~/.claude`
 directory; the installer does not create those directories.
 
@@ -94,4 +97,4 @@ views are the [system context](docs/architecture/system-context.md) and
 
 ## Next
 
-- Add new tools as independent packages when needed.
+- Add new tools as independent configuration directories when needed.

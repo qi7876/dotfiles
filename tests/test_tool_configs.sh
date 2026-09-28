@@ -14,7 +14,7 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 
-tmux -L "$tmux_label" -f "$repo_dir/.tmux.conf" \
+tmux -L "$tmux_label" -f "$repo_dir/tmux/.config/tmux/tmux.conf" \
     new-session -d || fail "tmux configuration could not be loaded"
 test "$(tmux -L "$tmux_label" show-options -gqv default-terminal)" = tmux-256color \
     || fail "tmux default terminal is incorrect"
@@ -29,9 +29,9 @@ SSH_CONNECTION='127.0.0.1 1 127.0.0.1 2' \
     '+lua assert(vim.g.clipboard == "osc52")' '+qa!' \
     || fail "Neovim SSH configuration could not be loaded"
 
-git config --file "$repo_dir/.gitconfig" --list >/dev/null \
+git config --file "$repo_dir/git/.config/git/config" --list >/dev/null \
     || fail "Git configuration could not be loaded"
-test "$(git config --file "$repo_dir/.gitconfig" --get credential.helper)" = store \
+test "$(git config --file "$repo_dir/git/.config/git/config" --get credential.helper)" = store \
     || fail "Git credential helper is incorrect"
 
 if command -v kitty >/dev/null 2>&1; then
