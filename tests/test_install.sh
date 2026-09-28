@@ -31,7 +31,8 @@ fake_uname() {
 }
 
 home_dir="$test_root/home"
-mkdir -p "$home_dir/.codex" "$home_dir/.claude"
+mkdir -p "$home_dir/.codex" "$home_dir/.claude" "$home_dir/.config/nvim"
+printf '%s\n' 'local configuration' >"$home_dir/.config/nvim/local.lua"
 darwin_bin="$test_root/darwin-bin"
 fake_uname "$darwin_bin" Darwin
 
@@ -48,11 +49,18 @@ case "$(realpath "$home_dir/.zshrc")" in
     "$repo_dir/shell-macos/"*) ;;
     *) fail "Darwin did not select shell-macos" ;;
 esac
-for config_file in .gitconfig .vimrc .tmux.conf; do
+for config_file in .gitconfig .tmux.conf; do
     assert_link "$home_dir/$config_file"
     test "$(readlink "$home_dir/$config_file")" = "$repo_dir/$config_file" \
         || fail "$config_file does not link directly to the repository root"
 done
+assert_link "$home_dir/.config/nvim/init.lua"
+test "$(readlink "$home_dir/.config/nvim/init.lua")" = "$repo_dir/nvim/.config/nvim/init.lua" \
+    || fail "Neovim init.lua does not link directly to the repository"
+test -d "$home_dir/.config/nvim" && test ! -L "$home_dir/.config/nvim" \
+    || fail "Neovim directory was replaced by a link"
+test "$(cat "$home_dir/.config/nvim/local.lua")" = 'local configuration' \
+    || fail "local Neovim configuration was modified"
 for agent_dir in .codex .claude; do
     assert_link "$home_dir/$agent_dir/AGENTS.md"
     test "$(readlink "$home_dir/$agent_dir/AGENTS.md")" = "$repo_dir/AGENTS.md" \
@@ -73,7 +81,7 @@ test -f "$credentials_file" || fail "Git credentials file was not created"
 test ! -s "$credentials_file" || fail "Git credentials file is not empty by default"
 test -f "$secrets_file" || fail "secrets file was not created"
 test -f "$ssh_local_file" || fail "SSH local config was not created"
-test -d "$home_dir/.local/state/vim" || fail "Vim state directory was not created"
+test ! -e "$home_dir/.local/state/vim" || fail "legacy Vim state directory was created"
 test "$(stat -f '%Lp' "$secrets_file" 2>/dev/null || stat -c '%a' "$secrets_file")" = 600 \
     || fail "secrets file permissions are not 600"
 test "$(stat -f '%Lp' "$credentials_file" 2>/dev/null || stat -c '%a' "$credentials_file")" = 600 \
@@ -91,9 +99,13 @@ grep -q 'Host private-example' "$ssh_local_file" || fail "SSH local config was o
 PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/uninstall.sh"
 test ! -L "$home_dir/.zshrc" || fail "shell link was not removed"
 test ! -L "$home_dir/.ssh/config" || fail "SSH config link was not removed"
-for config_file in .gitconfig .vimrc .tmux.conf; do
+for config_file in .gitconfig .tmux.conf; do
     test ! -e "$home_dir/$config_file" || fail "uninstall retained $config_file"
 done
+test ! -e "$home_dir/.config/nvim/init.lua" || fail "uninstall retained Neovim init.lua"
+test -d "$home_dir/.config/nvim" || fail "uninstall removed Neovim directory"
+test "$(cat "$home_dir/.config/nvim/local.lua")" = 'local configuration' \
+    || fail "uninstall changed local Neovim configuration"
 for agent_dir in .codex .claude; do
     test ! -e "$home_dir/$agent_dir/AGENTS.md" \
         || fail "uninstall retained $agent_dir/AGENTS.md"
@@ -102,7 +114,7 @@ done
 test -f "$secrets_file" || fail "uninstall removed the secrets file"
 test -f "$credentials_file" || fail "uninstall removed the Git credentials file"
 test -f "$ssh_local_file" || fail "uninstall removed the SSH local config"
-test -d "$home_dir/.local/state/vim" || fail "uninstall removed the Vim state directory"
+test ! -e "$home_dir/.local/state/vim" || fail "uninstall created Vim state"
 
 conflict_home="$test_root/conflict-home"
 mkdir -p "$conflict_home"
@@ -127,11 +139,26 @@ test ! -e "$agent_conflict_home/.gitconfig" \
 test "$(cat "$agent_conflict_home/.codex/AGENTS.md")" = 'keep me' \
     || fail "existing AGENTS.md was changed"
 
+nvim_conflict_home="$test_root/nvim-conflict-home"
+mkdir -p "$nvim_conflict_home/.config/nvim"
+printf '%s\n' 'keep me' >"$nvim_conflict_home/.config/nvim/init.lua"
+if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$nvim_conflict_home" \
+    "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
+    fail "install replaced an existing Neovim configuration"
+fi
+test ! -e "$nvim_conflict_home/.gitconfig" \
+    || fail "Neovim conflict caused a partial install"
+test "$(cat "$nvim_conflict_home/.config/nvim/init.lua")" = 'keep me' \
+    || fail "existing Neovim configuration was changed"
+
 linux_home="$test_root/linux-home"
 linux_bin="$test_root/linux-bin"
 mkdir -p "$linux_home/.config" "$linux_home/.dsh"
 fake_uname "$linux_bin" Linux
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
+assert_link "$linux_home/.config/nvim/init.lua"
+test -d "$linux_home/.config/nvim" && test ! -L "$linux_home/.config/nvim" \
+    || fail "Linux Neovim directory was linked instead of created"
 case "$(realpath "$linux_home/.zshrc")" in
     "$repo_dir/shell-linux/"*) ;;
     *) fail "Linux did not select shell-linux" ;;

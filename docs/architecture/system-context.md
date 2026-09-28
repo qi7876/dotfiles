@@ -10,7 +10,7 @@ C4Context
     System(dotfiles, "dotfiles", "Versions shared configuration and deploys it into a home directory")
     System_Ext(git, "Git", "Stores local configuration history")
     System_Ext(github, "GitHub", "Hosts the remote repository and pull requests")
-    System_Ext(tools, "CLI and desktop tools", "Zsh, Git, tmux, Kitty, Vim and SSH")
+    System_Ext(tools, "CLI and desktop tools", "Zsh, Git, tmux, Kitty, Neovim and SSH")
     System_Ext(local, "Local private files", "Secrets and machine-specific SSH hosts outside Git")
 
     Rel(owner, dotfiles, "Checks, installs and updates")

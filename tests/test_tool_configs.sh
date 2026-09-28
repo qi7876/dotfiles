@@ -21,13 +21,13 @@ test "$(tmux -L "$tmux_label" show-options -gqv default-terminal)" = tmux-256col
 cleanup
 trap - EXIT HUP INT TERM
 
-vim -Nu "$repo_dir/.vimrc" -n -es \
-    '+if !empty(v:errmsg) | cquit | endif' '+qa!' \
-    || fail "Vim configuration could not be loaded"
+nvim --headless -u "$repo_dir/nvim/.config/nvim/init.lua" -i NONE -n \
+    '+lua assert(vim.o.scrolloff == 8 and vim.o.tabstop == 4 and vim.o.clipboard == "unnamedplus")' '+qa!' \
+    || fail "Neovim configuration could not be loaded"
 SSH_CONNECTION='127.0.0.1 1 127.0.0.1 2' \
-    vim -Nu "$repo_dir/.vimrc" -n -es \
-    '+if !exists("g:osc52_force_avail") || !empty(v:errmsg) | cquit | endif' '+qa!' \
-    || fail "Vim SSH configuration could not be loaded"
+    nvim --headless -u "$repo_dir/nvim/.config/nvim/init.lua" -i NONE -n \
+    '+lua assert(vim.g.clipboard == "osc52")' '+qa!' \
+    || fail "Neovim SSH configuration could not be loaded"
 
 git config --file "$repo_dir/.gitconfig" --list >/dev/null \
     || fail "Git configuration could not be loaded"

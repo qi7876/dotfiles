@@ -25,12 +25,16 @@ case "$kernel_name" in
 esac
 
 stow --dir="$repo_dir" --target="$target" --delete "$@"
-for config_file in .gitconfig .vimrc .tmux.conf; do
+for config_file in .gitconfig .tmux.conf; do
     link="$target/$config_file"
     if [ -L "$link" ] && [ "$(readlink "$link")" = "$repo_dir/$config_file" ]; then
         rm "$link"
     fi
 done
+nvim_link="$target/.config/nvim/init.lua"
+if [ -L "$nvim_link" ] && [ "$(readlink "$nvim_link")" = "$repo_dir/nvim/.config/nvim/init.lua" ]; then
+    rm "$nvim_link"
+fi
 for agent_dir in .codex .dsh .claude; do
     link="$target/$agent_dir/AGENTS.md"
     if [ -L "$link" ] && [ "$(readlink "$link")" = "$repo_dir/AGENTS.md" ]; then

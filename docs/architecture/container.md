@@ -21,6 +21,7 @@ C4Container
 
 The scripts select `shell-macos` or `shell-linux` and preflight the applicable
 Stow packages and direct links. Kitty is macOS-only. Platform detection never
-runs inside Zsh. The installer links root Git, Vim, and tmux files into home and
-links `AGENTS.md` into existing tool directories. `~/.secrets.zsh`,
+runs inside Zsh. The installer links root Git and tmux files into home, links
+Neovim's `init.lua` inside `~/.config/nvim`, and links `AGENTS.md` into existing
+tool directories. `~/.secrets.zsh`,
 `~/.git-credentials`, and `config.local` remain ordinary local files.

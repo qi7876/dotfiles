@@ -11,8 +11,8 @@ files themselves contain no runtime platform detection or shared fragments.
 
 ## Prerequisites
 
-- Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, Vim, ripgrep, and OpenSSH
-- macOS: `brew install stow fzf zoxide jq tmux vim ripgrep`
+- Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, Neovim, ripgrep, and OpenSSH
+- macOS: `brew install stow fzf zoxide jq tmux neovim ripgrep`
 - Debian/Ubuntu: install the equivalent packages with `apt`
 
 Kitty configuration is deployed only on macOS.
@@ -71,10 +71,11 @@ export MIHOMO_SECRET=
 Git uses `credential-store` with `~/.git-credentials`. Add credentials there
 when needed; it starts empty and stores them as plain text.
 
-The shared Git, Vim, and tmux files are linked from the repository root to
-`~/.gitconfig`, `~/.vimrc`, and `~/.tmux.conf`. The root `AGENTS.md` is linked
-into each existing `~/.codex`, `~/.dsh`, and `~/.claude` directory; the installer
-does not create those directories.
+The shared Git and tmux files are linked from the repository root to
+`~/.gitconfig` and `~/.tmux.conf`. Neovim's `init.lua` is linked inside the
+ordinary `~/.config/nvim` directory, which can also hold local files. The root
+`AGENTS.md` is linked into each existing `~/.codex`, `~/.dsh`, and `~/.claude`
+directory; the installer does not create those directories.
 
 Private SSH hosts belong in `~/.ssh/config.local`. SSH keys, `known_hosts`,
 histories, backups, and editor state are never tracked.
@@ -93,4 +94,4 @@ views are the [system context](docs/architecture/system-context.md) and
 
 ## Next
 
-- Add new tools as independent Stow packages when needed.
+- Add new tools as independent packages when needed.
