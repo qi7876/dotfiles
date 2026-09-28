@@ -40,13 +40,13 @@ case "$(realpath "$home_dir/.zshrc")" in
     *) fail "Darwin did not select shell-macos" ;;
 esac
 assert_link "$home_dir/.config/git/config"
-test "$(readlink "$home_dir/.config/git/config")" = "$repo_dir/git/.config/git/config" \
+test "$(readlink "$home_dir/.config/git/config")" = "$repo_dir/git/config" \
     || fail "Git configuration does not link to the repository"
 assert_link "$home_dir/.config/tmux/tmux.conf"
-test "$(readlink "$home_dir/.config/tmux/tmux.conf")" = "$repo_dir/tmux/.config/tmux/tmux.conf" \
+test "$(readlink "$home_dir/.config/tmux/tmux.conf")" = "$repo_dir/tmux/tmux.conf" \
     || fail "tmux configuration does not link to the repository"
 assert_link "$home_dir/.config/nvim/init.lua"
-test "$(readlink "$home_dir/.config/nvim/init.lua")" = "$repo_dir/nvim/.config/nvim/init.lua" \
+test "$(readlink "$home_dir/.config/nvim/init.lua")" = "$repo_dir/nvim/init.lua" \
     || fail "Neovim init.lua does not link directly to the repository"
 test -d "$home_dir/.config/nvim" && test ! -L "$home_dir/.config/nvim" \
     || fail "Neovim directory was replaced by a link"
@@ -55,7 +55,7 @@ test "$(cat "$home_dir/.config/nvim/local.lua")" = 'local configuration' \
 for config_file in kitty.conf ssh.conf current-theme.conf; do
     assert_link "$home_dir/.config/kitty/$config_file"
     test "$(readlink "$home_dir/.config/kitty/$config_file")" = \
-        "$repo_dir/kitty/.config/kitty/$config_file" \
+        "$repo_dir/kitty/$config_file" \
         || fail "Kitty $config_file does not link to the repository"
 done
 test -d "$home_dir/.config/kitty" && test ! -L "$home_dir/.config/kitty" \
@@ -145,7 +145,7 @@ if conflict_output=$(PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$conflict_home" \
     fail "install succeeded despite an existing file conflict"
 fi
 printf '%s\n' "$conflict_output" | grep -q '.zshrc' \
-    || fail "install hid the Stow conflict diagnostic"
+    || fail "install hid the conflict diagnostic"
 test "$(cat "$conflict_home/.zshrc")" = 'keep me' || fail "conflicting file was modified"
 
 agent_conflict_home="$test_root/agent-conflict-home"
@@ -174,7 +174,7 @@ test "$(cat "$nvim_conflict_home/.config/nvim/init.lua")" = 'keep me' \
 
 kitty_conflict_home="$test_root/kitty-conflict-home"
 mkdir -p "$kitty_conflict_home/.config"
-ln -s "$repo_dir/kitty/.config/kitty" "$kitty_conflict_home/.config/kitty"
+ln -s "$repo_dir/kitty" "$kitty_conflict_home/.config/kitty"
 if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$kitty_conflict_home" \
     "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
     fail "install accepted a linked Kitty directory"

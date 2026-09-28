@@ -38,6 +38,8 @@ Package arguments are intentionally unsupported. On macOS the scripts deploy
 Other kernels are rejected before the script creates links or local files.
 
 The installer creates real directories and links each managed file separately.
+Repository tool directories contain only their configuration files; the link
+destinations are defined in `scripts/managed-links.sh`.
 Installation stops on conflicts instead of overwriting existing files. Use
 `DOTFILES_TARGET=/temporary/home` to operate on a different home directory.
 Existing directory links and former Git or tmux home-directory links are not
