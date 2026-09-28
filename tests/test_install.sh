@@ -195,6 +195,36 @@ test ! -e "$kitty_conflict_home/.config/git/config" \
 test -L "$kitty_conflict_home/.config/kitty" \
     || fail "conflicting Kitty directory link was modified"
 
+multiple_conflict_home="$test_root/multiple-conflict-home"
+mkdir -p "$multiple_conflict_home/.config/git" \
+    "$multiple_conflict_home/.config/nvim" "$multiple_conflict_home/.codex"
+printf '%s\n' 'keep me' >"$multiple_conflict_home/.zshrc"
+printf '%s\n' 'keep me' >"$multiple_conflict_home/.config/git/config"
+ln -s "$repo_dir/kitty" "$multiple_conflict_home/.config/kitty"
+ln -s "$repo_dir/git/config" "$multiple_conflict_home/.config/nvim/init.lua"
+ln -s "$repo_dir/git/config" "$multiple_conflict_home/.secrets.zsh"
+mkdir "$multiple_conflict_home/.codex/AGENTS.md"
+if multiple_conflicts=$(PATH="$darwin_bin:$PATH" \
+    DOTFILES_TARGET="$multiple_conflict_home" "$repo_dir/scripts/install.sh" 2>&1); then
+    fail "install succeeded despite multiple conflicts"
+fi
+for conflict in \
+    '.zshrc (file)' \
+    '.config/git/config (file)' \
+    '.config/kitty (directory link)' \
+    '.config/nvim/init.lua (file link)' \
+    '.secrets.zsh (file link)' \
+    '.codex/AGENTS.md (directory)'; do
+    printf '%s\n' "$multiple_conflicts" | grep -Fq "$conflict" \
+        || fail "install omitted conflict: $conflict"
+done
+printf '%s\n' "$multiple_conflicts" | grep -q 'error: 6 conflict(s) found' \
+    || fail "install reported the wrong number of conflicts"
+test ! -e "$multiple_conflict_home/.config/tmux" \
+    || fail "conflict preflight created a tmux directory"
+test ! -e "$multiple_conflict_home/.config/git/credentials" \
+    || fail "conflict preflight created a credential file"
+
 linux_home="$test_root/linux-home"
 linux_bin="$test_root/linux-bin"
 mkdir -p "$linux_home/.config" "$linux_home/.dsh"
