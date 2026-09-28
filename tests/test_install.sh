@@ -14,14 +14,6 @@ assert_link() {
     test -L "$1" || fail "$1 is not a symbolic link"
 }
 
-assert_managed() {
-    resolved=$(realpath "$1")
-    case "$resolved" in
-        "$repo_dir"/*) ;;
-        *) fail "$1 does not resolve into the dotfiles repository" ;;
-    esac
-}
-
 fake_uname() {
     fake_dir=$1
     kernel_name=$2
@@ -31,15 +23,14 @@ fake_uname() {
 }
 
 home_dir="$test_root/home"
-mkdir -p "$home_dir/.codex" "$home_dir/.claude"
+mkdir -p "$home_dir/.codex" "$home_dir/.claude" \
+    "$home_dir/.config/nvim" "$home_dir/.config/kitty"
+printf '%s\n' 'local configuration' >"$home_dir/.config/nvim/local.lua"
+printf '%s\n' 'local theme' >"$home_dir/.config/kitty/local.conf"
 darwin_bin="$test_root/darwin-bin"
 fake_uname "$darwin_bin" Darwin
 
-install_output=$(PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" \
-    "$repo_dir/scripts/install.sh" 2>&1)
-case "$install_output" in
-    *'simulation mode'*) fail "install exposed Stow's simulation warning" ;;
-esac
+PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/install.sh"
 
 assert_link "$home_dir/.zshrc"
 assert_link "$home_dir/.zprofile"
@@ -48,11 +39,45 @@ case "$(realpath "$home_dir/.zshrc")" in
     "$repo_dir/shell-macos/"*) ;;
     *) fail "Darwin did not select shell-macos" ;;
 esac
-for config_file in .gitconfig .vimrc .tmux.conf; do
-    assert_link "$home_dir/$config_file"
-    test "$(readlink "$home_dir/$config_file")" = "$repo_dir/$config_file" \
-        || fail "$config_file does not link directly to the repository root"
+assert_link "$home_dir/.config/git/config"
+test "$(readlink "$home_dir/.config/git/config")" = "$repo_dir/git/config" \
+    || fail "Git configuration does not link to the repository"
+assert_link "$home_dir/.config/tmux/tmux.conf"
+test "$(readlink "$home_dir/.config/tmux/tmux.conf")" = "$repo_dir/tmux/tmux.conf" \
+    || fail "tmux configuration does not link to the repository"
+assert_link "$home_dir/.config/nvim/init.lua"
+test "$(readlink "$home_dir/.config/nvim/init.lua")" = "$repo_dir/nvim/init.lua" \
+    || fail "Neovim init.lua does not link directly to the repository"
+test -d "$home_dir/.config/nvim" && test ! -L "$home_dir/.config/nvim" \
+    || fail "Neovim directory was replaced by a link"
+test "$(cat "$home_dir/.config/nvim/local.lua")" = 'local configuration' \
+    || fail "local Neovim configuration was modified"
+for config_file in kitty.conf ssh.conf current-theme.conf; do
+    assert_link "$home_dir/.config/kitty/$config_file"
+    test "$(readlink "$home_dir/.config/kitty/$config_file")" = \
+        "$repo_dir/kitty/$config_file" \
+        || fail "Kitty $config_file does not link to the repository"
 done
+test -d "$home_dir/.config/kitty" && test ! -L "$home_dir/.config/kitty" \
+    || fail "Kitty directory was replaced by a link"
+test "$(cat "$home_dir/.config/kitty/local.conf")" = 'local theme' \
+    || fail "local Kitty configuration was modified"
+for config_dir in git tmux nvim kitty; do
+    test -d "$home_dir/.config/$config_dir" && test ! -L "$home_dir/.config/$config_dir" \
+        || fail "$config_dir directory is not a real directory"
+done
+test -d "$home_dir/.ssh" && test ! -L "$home_dir/.ssh" \
+    || fail "SSH directory is not a real directory"
+test "$(HOME="$home_dir" XDG_CONFIG_HOME="$home_dir/.config" \
+    git config --global --get user.name)" = qi7876 \
+    || fail "Git did not load the XDG configuration"
+tmux_label="dotfiles-install-test-$$"
+HOME="$home_dir" XDG_CONFIG_HOME="$home_dir/.config" \
+    tmux -L "$tmux_label" new-session -d \
+    || fail "tmux did not load the XDG configuration"
+test "$(tmux -L "$tmux_label" show-options -gqv default-terminal)" = tmux-256color \
+    || fail "tmux did not apply the XDG configuration"
+tmux -L "$tmux_label" kill-server
 for agent_dir in .codex .claude; do
     assert_link "$home_dir/$agent_dir/AGENTS.md"
     test "$(readlink "$home_dir/$agent_dir/AGENTS.md")" = "$repo_dir/AGENTS.md" \
@@ -60,24 +85,33 @@ for agent_dir in .codex .claude; do
 done
 test ! -e "$home_dir/.dsh" || fail "install created an absent agent directory"
 test ! -e "$home_dir/.config/agents" || fail "install deployed the old AGENTS path"
-test ! -e "$home_dir/.config/git" || fail "install deployed the old Git path"
-assert_managed "$home_dir/.config/kitty/kitty.conf"
 test ! -e "$home_dir/.config/gh" \
     || fail "Darwin install deployed GitHub CLI configuration"
 assert_link "$home_dir/.ssh/config"
 
-credentials_file="$home_dir/.git-credentials"
+credentials_file="$home_dir/.config/git/credentials"
 secrets_file="$home_dir/.secrets.zsh"
 ssh_local_file="$home_dir/.ssh/config.local"
 test -f "$credentials_file" || fail "Git credentials file was not created"
 test ! -s "$credentials_file" || fail "Git credentials file is not empty by default"
 test -f "$secrets_file" || fail "secrets file was not created"
+test ! -s "$secrets_file" || fail "secrets file is not empty by default"
 test -f "$ssh_local_file" || fail "SSH local config was not created"
-test -d "$home_dir/.local/state/vim" || fail "Vim state directory was not created"
+test ! -s "$ssh_local_file" || fail "SSH local config is not empty by default"
+test ! -e "$home_dir/.local/state/vim" || fail "legacy Vim state directory was created"
 test "$(stat -f '%Lp' "$secrets_file" 2>/dev/null || stat -c '%a' "$secrets_file")" = 600 \
     || fail "secrets file permissions are not 600"
 test "$(stat -f '%Lp' "$credentials_file" 2>/dev/null || stat -c '%a' "$credentials_file")" = 600 \
     || fail "Git credentials file permissions are not 600"
+test "$(stat -f '%Lp' "$ssh_local_file" 2>/dev/null || stat -c '%a' "$ssh_local_file")" = 600 \
+    || fail "SSH local config permissions are not 600"
+printf 'protocol=https\nhost=example.test\nusername=test-user\npassword=test-password\n\n' \
+    | HOME="$home_dir" XDG_CONFIG_HOME="$home_dir/.config" GIT_CONFIG_NOSYSTEM=1 \
+        git -C "$home_dir" credential approve
+test "$(cat "$credentials_file")" = 'https://test-user:test-password@example.test' \
+    || fail "Git credential helper did not use the XDG credentials file"
+test ! -e "$home_dir/.git-credentials" \
+    || fail "Git credential helper created the legacy credentials file"
 
 printf '%s\n' 'export TEST_SECRET=preserved' >"$secrets_file"
 printf '%s\n' 'https://test-user:test-token@example.com' >"$credentials_file"
@@ -91,9 +125,19 @@ grep -q 'Host private-example' "$ssh_local_file" || fail "SSH local config was o
 PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$home_dir" "$repo_dir/scripts/uninstall.sh"
 test ! -L "$home_dir/.zshrc" || fail "shell link was not removed"
 test ! -L "$home_dir/.ssh/config" || fail "SSH config link was not removed"
-for config_file in .gitconfig .vimrc .tmux.conf; do
-    test ! -e "$home_dir/$config_file" || fail "uninstall retained $config_file"
+test ! -e "$home_dir/.config/git/config" || fail "uninstall retained Git config"
+test ! -e "$home_dir/.config/tmux/tmux.conf" || fail "uninstall retained tmux config"
+test ! -e "$home_dir/.config/nvim/init.lua" || fail "uninstall retained Neovim init.lua"
+test -d "$home_dir/.config/nvim" || fail "uninstall removed Neovim directory"
+test "$(cat "$home_dir/.config/nvim/local.lua")" = 'local configuration' \
+    || fail "uninstall changed local Neovim configuration"
+for config_file in kitty.conf ssh.conf current-theme.conf; do
+    test ! -e "$home_dir/.config/kitty/$config_file" \
+        || fail "uninstall retained Kitty $config_file"
 done
+test -d "$home_dir/.config/kitty" || fail "uninstall removed Kitty directory"
+test "$(cat "$home_dir/.config/kitty/local.conf")" = 'local theme' \
+    || fail "uninstall changed local Kitty configuration"
 for agent_dir in .codex .claude; do
     test ! -e "$home_dir/$agent_dir/AGENTS.md" \
         || fail "uninstall retained $agent_dir/AGENTS.md"
@@ -102,7 +146,7 @@ done
 test -f "$secrets_file" || fail "uninstall removed the secrets file"
 test -f "$credentials_file" || fail "uninstall removed the Git credentials file"
 test -f "$ssh_local_file" || fail "uninstall removed the SSH local config"
-test -d "$home_dir/.local/state/vim" || fail "uninstall removed the Vim state directory"
+test ! -e "$home_dir/.local/state/vim" || fail "uninstall created Vim state"
 
 conflict_home="$test_root/conflict-home"
 mkdir -p "$conflict_home"
@@ -112,7 +156,7 @@ if conflict_output=$(PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$conflict_home" \
     fail "install succeeded despite an existing file conflict"
 fi
 printf '%s\n' "$conflict_output" | grep -q '.zshrc' \
-    || fail "install hid the Stow conflict diagnostic"
+    || fail "install hid the conflict diagnostic"
 test "$(cat "$conflict_home/.zshrc")" = 'keep me' || fail "conflicting file was modified"
 
 agent_conflict_home="$test_root/agent-conflict-home"
@@ -122,16 +166,75 @@ if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$agent_conflict_home" \
     "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
     fail "install replaced an existing AGENTS.md"
 fi
-test ! -e "$agent_conflict_home/.gitconfig" \
+test ! -e "$agent_conflict_home/.config/git/config" \
     || fail "agent conflict caused a partial install"
 test "$(cat "$agent_conflict_home/.codex/AGENTS.md")" = 'keep me' \
     || fail "existing AGENTS.md was changed"
+
+nvim_conflict_home="$test_root/nvim-conflict-home"
+mkdir -p "$nvim_conflict_home/.config/nvim"
+printf '%s\n' 'keep me' >"$nvim_conflict_home/.config/nvim/init.lua"
+if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$nvim_conflict_home" \
+    "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
+    fail "install replaced an existing Neovim configuration"
+fi
+test ! -e "$nvim_conflict_home/.config/git/config" \
+    || fail "Neovim conflict caused a partial install"
+test "$(cat "$nvim_conflict_home/.config/nvim/init.lua")" = 'keep me' \
+    || fail "existing Neovim configuration was changed"
+
+kitty_conflict_home="$test_root/kitty-conflict-home"
+mkdir -p "$kitty_conflict_home/.config"
+ln -s "$repo_dir/kitty" "$kitty_conflict_home/.config/kitty"
+if PATH="$darwin_bin:$PATH" DOTFILES_TARGET="$kitty_conflict_home" \
+    "$repo_dir/scripts/install.sh" >/dev/null 2>&1; then
+    fail "install accepted a linked Kitty directory"
+fi
+test ! -e "$kitty_conflict_home/.config/git/config" \
+    || fail "Kitty directory conflict caused a partial install"
+test -L "$kitty_conflict_home/.config/kitty" \
+    || fail "conflicting Kitty directory link was modified"
+
+multiple_conflict_home="$test_root/multiple-conflict-home"
+mkdir -p "$multiple_conflict_home/.config/git" \
+    "$multiple_conflict_home/.config/nvim" "$multiple_conflict_home/.codex"
+printf '%s\n' 'keep me' >"$multiple_conflict_home/.zshrc"
+printf '%s\n' 'keep me' >"$multiple_conflict_home/.config/git/config"
+ln -s "$repo_dir/kitty" "$multiple_conflict_home/.config/kitty"
+ln -s "$repo_dir/git/config" "$multiple_conflict_home/.config/nvim/init.lua"
+ln -s "$repo_dir/git/config" "$multiple_conflict_home/.secrets.zsh"
+mkdir "$multiple_conflict_home/.codex/AGENTS.md"
+if multiple_conflicts=$(PATH="$darwin_bin:$PATH" \
+    DOTFILES_TARGET="$multiple_conflict_home" "$repo_dir/scripts/install.sh" 2>&1); then
+    fail "install succeeded despite multiple conflicts"
+fi
+for conflict in \
+    '.zshrc (file)' \
+    '.config/git/config (file)' \
+    '.config/kitty (directory link)' \
+    '.config/nvim/init.lua (file link)' \
+    '.secrets.zsh (file link)' \
+    '.codex/AGENTS.md (directory)'; do
+    printf '%s\n' "$multiple_conflicts" | grep -Fq "$conflict" \
+        || fail "install omitted conflict: $conflict"
+done
+printf '%s\n' "$multiple_conflicts" | grep -q 'error: 6 conflict(s) found' \
+    || fail "install reported the wrong number of conflicts"
+test ! -e "$multiple_conflict_home/.config/tmux" \
+    || fail "conflict preflight created a tmux directory"
+test ! -e "$multiple_conflict_home/.config/git/credentials" \
+    || fail "conflict preflight created a credential file"
 
 linux_home="$test_root/linux-home"
 linux_bin="$test_root/linux-bin"
 mkdir -p "$linux_home/.config" "$linux_home/.dsh"
 fake_uname "$linux_bin" Linux
 PATH="$linux_bin:$PATH" DOTFILES_TARGET="$linux_home" "$repo_dir/scripts/install.sh"
+assert_link "$linux_home/.config/nvim/init.lua"
+assert_link "$linux_home/.config/git/config"
+assert_link "$linux_home/.config/tmux/tmux.conf"
+test -d "$linux_home/.config/nvim" && test ! -L "$linux_home/.config/nvim" \
+    || fail "Linux Neovim directory was linked instead of created"
 case "$(realpath "$linux_home/.zshrc")" in
     "$repo_dir/shell-linux/"*) ;;
     *) fail "Linux did not select shell-linux" ;;

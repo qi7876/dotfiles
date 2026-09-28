@@ -3,97 +3,144 @@ set -eu
 
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 target=${DOTFILES_TARGET:-$HOME}
+. "$repo_dir/scripts/managed-links.sh"
 
 if [ "$#" -ne 0 ]; then
     printf 'usage: %s\n' "$0" >&2
     exit 2
 fi
 
-command -v stow >/dev/null 2>&1 || {
-    printf '%s\n' 'error: GNU Stow is required' >&2
-    exit 1
-}
-
 kernel_name=$(uname -s)
 case "$kernel_name" in
-    Darwin)
-        set -- shell-macos kitty ssh
-        ;;
-    Linux)
-        set -- shell-linux ssh
-        ;;
+    Darwin | Linux) ;;
     *)
         printf 'error: unsupported platform: %s\n' "$kernel_name" >&2
         exit 1
         ;;
 esac
 
-mkdir -p "$target"
-credentials_file="$target/.git-credentials"
-if [ -L "$credentials_file" ] \
-    || { [ -e "$credentials_file" ] && [ ! -f "$credentials_file" ]; }; then
-    printf 'error: %s is not a regular credential file\n' "$credentials_file" >&2
-    exit 1
-fi
-for config_file in .gitconfig .vimrc .tmux.conf; do
-    link="$target/$config_file"
-    if [ -L "$link" ]; then
-        if [ "$(readlink "$link")" != "$repo_dir/$config_file" ]; then
-            printf 'error: %s is not managed by this repository\n' "$link" >&2
-            exit 1
+existing_kind() {
+    if [ -L "$1" ]; then
+        if [ -d "$1" ]; then
+            printf 'directory link'
+        elif [ -f "$1" ]; then
+            printf 'file link'
+        else
+            printf 'symbolic link'
         fi
-    elif [ -e "$link" ]; then
-        printf 'error: %s already exists\n' "$link" >&2
-        exit 1
+    elif [ -d "$1" ]; then
+        printf 'directory'
+    elif [ -f "$1" ]; then
+        printf 'file'
+    else
+        printf 'filesystem entry'
     fi
+}
+
+report_conflict() {
+    printf 'conflict: %s (%s): %s\n' "$1" "$(existing_kind "$1")" "$2" >&2
+    conflict_count=$((conflict_count + 1))
+}
+
+blocked_parent() {
+    ancestor=$(dirname "$1")
+    while :; do
+        if [ -L "$ancestor" ] || { [ -e "$ancestor" ] && [ ! -d "$ancestor" ]; }; then
+            return 0
+        fi
+        if [ "$ancestor" = "$target" ]; then
+            break
+        fi
+        parent=$(dirname "$ancestor")
+        if [ "$parent" = "$ancestor" ]; then
+            break
+        fi
+        ancestor=$parent
+    done
+    return 1
+}
+
+check_directory() {
+    if [ "$1" != "$target" ] && blocked_parent "$1"; then
+        return 0
+    fi
+    if [ -L "$1" ] || { [ -e "$1" ] && [ ! -d "$1" ]; }; then
+        report_conflict "$1" 'expected a real directory'
+    fi
+}
+
+check_local_file() {
+    if blocked_parent "$1"; then
+        return 0
+    fi
+    if [ -L "$1" ] || { [ -e "$1" ] && [ ! -f "$1" ]; }; then
+        report_conflict "$1" 'expected a regular local file'
+    fi
+}
+
+check_link() {
+    if blocked_parent "$2"; then
+        return 0
+    fi
+    if [ -L "$2" ]; then
+        if [ "$(readlink "$2")" != "$1" ]; then
+            report_conflict "$2" "expected a link to $1"
+        fi
+    elif [ -e "$2" ]; then
+        report_conflict "$2" "expected a link to $1"
+    fi
+}
+
+create_link() {
+    if [ ! -L "$2" ]; then
+        ln -s "$1" "$2"
+    fi
+}
+
+conflict_count=0
+credentials_file="$target/.config/git/credentials"
+secrets_file="$target/.secrets.zsh"
+ssh_local_file="$target/.ssh/config.local"
+check_directory "$target"
+for config_dir in "$target/.config" "$target/.config/git" \
+    "$target/.config/tmux" "$target/.config/nvim" "$target/.ssh"; do
+    check_directory "$config_dir"
 done
+if [ "$kernel_name" = Darwin ]; then
+    check_directory "$target/.config/kitty"
+fi
+for local_file in "$credentials_file" "$secrets_file" "$ssh_local_file"; do
+    check_local_file "$local_file"
+done
+managed_links check_link
+
 for agent_dir in .codex .dsh .claude; do
     directory="$target/$agent_dir"
-    if [ -d "$directory" ]; then
-        link="$directory/AGENTS.md"
-        if [ -L "$link" ]; then
-            if [ "$(readlink "$link")" != "$repo_dir/AGENTS.md" ]; then
-                printf 'error: %s is not managed by this repository\n' "$link" >&2
-                exit 1
-            fi
-        elif [ -e "$link" ]; then
-            printf 'error: %s already exists\n' "$link" >&2
-            exit 1
-        fi
-    elif [ -e "$directory" ] || [ -L "$directory" ]; then
-        printf 'error: %s is not a directory\n' "$directory" >&2
-        exit 1
+    if [ -d "$directory" ] && [ ! -L "$directory" ]; then
+        check_link "$repo_dir/AGENTS.md" "$directory/AGENTS.md"
+    else
+        check_directory "$directory"
     fi
 done
-
-# Check the complete operation before creating links or local-only files.
-if ! preflight_output=$(stow --dir="$repo_dir" --target="$target" --no --restow "$@" 2>&1); then
-    printf '%s\n' "$preflight_output" >&2
+if [ "$conflict_count" -gt 0 ]; then
+    printf 'error: %s conflict(s) found\n' "$conflict_count" >&2
     exit 1
 fi
 
 umask 077
-mkdir -p "$target/.local/state/vim" "$target/.ssh"
-if [ ! -e "$credentials_file" ]; then
-    : >"$credentials_file"
+mkdir -p "$target"
+mkdir -p "$target/.config/git" "$target/.config/tmux" \
+    "$target/.config/nvim" "$target/.ssh"
+if [ "$kernel_name" = Darwin ]; then
+    mkdir -p "$target/.config/kitty"
 fi
-secrets_file="$target/.secrets.zsh"
-ssh_local_file="$target/.ssh/config.local"
-
-if [ ! -e "$secrets_file" ]; then
-    cp "$repo_dir/templates/secrets.zsh.example" "$secrets_file"
-fi
-if [ ! -e "$ssh_local_file" ]; then
-    cp "$repo_dir/templates/ssh-config.local.example" "$ssh_local_file"
-fi
-chmod 600 "$credentials_file" "$secrets_file" "$ssh_local_file"
-stow --dir="$repo_dir" --target="$target" --restow "$@"
-for config_file in .gitconfig .vimrc .tmux.conf; do
-    link="$target/$config_file"
-    if [ ! -L "$link" ]; then
-        ln -s "$repo_dir/$config_file" "$link"
+for local_file in "$credentials_file" "$secrets_file" "$ssh_local_file"; do
+    if [ ! -e "$local_file" ]; then
+        : >"$local_file"
     fi
+    chmod 600 "$local_file"
 done
+managed_links create_link
 for agent_dir in .codex .dsh .claude; do
     directory="$target/$agent_dir"
     if [ -d "$directory" ] && [ ! -L "$directory/AGENTS.md" ]; then

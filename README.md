@@ -1,9 +1,9 @@
 # dotfiles
 
 Personal, cross-platform shell and development-tool configuration installed
-with direct links and [GNU Stow](https://www.gnu.org/software/stow/). The
-repository is the source of truth for shared configuration; credentials and
-machine-specific values stay in local files outside Git.
+with individual symbolic links. The repository is the source of truth for
+shared configuration; credentials and machine-specific values stay in local
+files outside Git.
 
 Zsh is maintained as two independent packages: `shell-macos` and `shell-linux`.
 The management scripts resolve the public `shell` package from `uname`; the Zsh
@@ -11,8 +11,8 @@ files themselves contain no runtime platform detection or shared fragments.
 
 ## Prerequisites
 
-- Git, Zsh, GNU Stow, fzf, zoxide, jq, tmux, Vim, ripgrep, and OpenSSH
-- macOS: `brew install stow fzf zoxide jq tmux vim ripgrep`
+- Git, Zsh, fzf, zoxide, jq, tmux, Neovim, ripgrep, and OpenSSH
+- macOS: `brew install fzf zoxide jq tmux neovim ripgrep`
 - Debian/Ubuntu: install the equivalent packages with `apt`
 
 Kitty configuration is deployed only on macOS.
@@ -37,15 +37,21 @@ Package arguments are intentionally unsupported. On macOS the scripts deploy
 `shell-macos` and Kitty; on Linux they deploy `shell-linux` without Kitty.
 Other kernels are rejected before the script creates links or local files.
 
-Installation stops on conflicts instead of overwriting existing files. Use
+The installer creates real directories and links each managed file separately.
+Repository tool directories contain only their configuration files; the link
+destinations are defined in `scripts/managed-links.sh`.
+Installation reports all path conflicts before creating files or links and
+does not overwrite existing files. Use
 `DOTFILES_TARGET=/temporary/home` to operate on a different home directory.
+Existing directory links and former Git or tmux home-directory links are not
+migrated; remove them manually before using the new layout.
 
 ## Local configuration
 
-The installer creates these files once with mode `600` and never overwrites or
-removes them:
+The installer creates these files empty when missing, sets mode `600`, and
+never overwrites or removes their contents:
 
-- `~/.git-credentials` (initially empty)
+- `~/.config/git/credentials`
 - `~/.secrets.zsh`
 - `~/.ssh/config.local`
 
@@ -68,13 +74,14 @@ Add the Mihomo secret to `~/.secrets.zsh` when authentication is enabled:
 export MIHOMO_SECRET=
 ```
 
-Git uses `credential-store` with `~/.git-credentials`. Add credentials there
-when needed; it starts empty and stores them as plain text.
+Git uses `credential-store` with `~/.config/git/credentials`. Add credentials
+there when needed; it starts empty and stores them as plain text.
 
-The shared Git, Vim, and tmux files are linked from the repository root to
-`~/.gitconfig`, `~/.vimrc`, and `~/.tmux.conf`. The root `AGENTS.md` is linked
-into each existing `~/.codex`, `~/.dsh`, and `~/.claude` directory; the installer
-does not create those directories.
+Git, tmux, and Neovim are linked to `~/.config/git/config`,
+`~/.config/tmux/tmux.conf`, and `~/.config/nvim/init.lua`. Kitty files are
+linked individually inside `~/.config/kitty` on macOS. The root
+`AGENTS.md` is linked into each existing `~/.codex`, `~/.dsh`, and `~/.claude`
+directory; the installer does not create those directories.
 
 Private SSH hosts belong in `~/.ssh/config.local`. SSH keys, `known_hosts`,
 histories, backups, and editor state are never tracked.
@@ -93,4 +100,4 @@ views are the [system context](docs/architecture/system-context.md) and
 
 ## Next
 
-- Add new tools as independent Stow packages when needed.
+- Add new tools as independent configuration directories when needed.
