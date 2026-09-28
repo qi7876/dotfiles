@@ -4,8 +4,8 @@
 
 C4 模型包含四个核心抽象层级：
 
-1. System Context：这个系统是谁在用（user、admin），以及和哪些外部系统交互（payment、email）？
-1. Container：System 由哪些可执行或可运行的主要单元组成？它们之间如何通信，主要技术栈是什么？
+1. System Context：`system-context.md`，这个系统是谁在用（user、admin），以及和哪些外部系统交互（payment、email）？
+1. Container：`containers.md`，System 由哪些可执行或可运行的主要单元组成？它们之间如何通信，主要技术栈是什么？
 1. Component：Container 内部由哪些具有明确职责和接口的构件组成？
 1. Code：具体的代码结构。
 
