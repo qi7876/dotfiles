@@ -46,11 +46,15 @@ create_link() {
 
 mkdir -p "$target"
 credentials_file="$target/.git-credentials"
-if [ -L "$credentials_file" ] \
-    || { [ -e "$credentials_file" ] && [ ! -f "$credentials_file" ]; }; then
-    printf 'error: %s is not a regular credential file\n' "$credentials_file" >&2
-    exit 1
-fi
+secrets_file="$target/.secrets.zsh"
+ssh_local_file="$target/.ssh/config.local"
+for local_file in "$credentials_file" "$secrets_file" "$ssh_local_file"; do
+    if [ -L "$local_file" ] \
+        || { [ -e "$local_file" ] && [ ! -f "$local_file" ]; }; then
+        printf 'error: %s is not a regular file\n' "$local_file" >&2
+        exit 1
+    fi
+done
 
 for config_dir in "$target/.config" "$target/.config/git" \
     "$target/.config/tmux" "$target/.config/nvim" "$target/.ssh"; do
@@ -77,19 +81,12 @@ mkdir -p "$target/.config/git" "$target/.config/tmux" \
 if [ "$kernel_name" = Darwin ]; then
     mkdir -p "$target/.config/kitty"
 fi
-if [ ! -e "$credentials_file" ]; then
-    : >"$credentials_file"
-fi
-secrets_file="$target/.secrets.zsh"
-ssh_local_file="$target/.ssh/config.local"
-
-if [ ! -e "$secrets_file" ]; then
-    cp "$repo_dir/templates/secrets.zsh.example" "$secrets_file"
-fi
-if [ ! -e "$ssh_local_file" ]; then
-    cp "$repo_dir/templates/ssh-config.local.example" "$ssh_local_file"
-fi
-chmod 600 "$credentials_file" "$secrets_file" "$ssh_local_file"
+for local_file in "$credentials_file" "$secrets_file" "$ssh_local_file"; do
+    if [ ! -e "$local_file" ]; then
+        : >"$local_file"
+    fi
+    chmod 600 "$local_file"
+done
 managed_links create_link
 for agent_dir in .codex .dsh .claude; do
     directory="$target/$agent_dir"

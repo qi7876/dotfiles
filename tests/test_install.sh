@@ -95,12 +95,16 @@ ssh_local_file="$home_dir/.ssh/config.local"
 test -f "$credentials_file" || fail "Git credentials file was not created"
 test ! -s "$credentials_file" || fail "Git credentials file is not empty by default"
 test -f "$secrets_file" || fail "secrets file was not created"
+test ! -s "$secrets_file" || fail "secrets file is not empty by default"
 test -f "$ssh_local_file" || fail "SSH local config was not created"
+test ! -s "$ssh_local_file" || fail "SSH local config is not empty by default"
 test ! -e "$home_dir/.local/state/vim" || fail "legacy Vim state directory was created"
 test "$(stat -f '%Lp' "$secrets_file" 2>/dev/null || stat -c '%a' "$secrets_file")" = 600 \
     || fail "secrets file permissions are not 600"
 test "$(stat -f '%Lp' "$credentials_file" 2>/dev/null || stat -c '%a' "$credentials_file")" = 600 \
     || fail "Git credentials file permissions are not 600"
+test "$(stat -f '%Lp' "$ssh_local_file" 2>/dev/null || stat -c '%a' "$ssh_local_file")" = 600 \
+    || fail "SSH local config permissions are not 600"
 
 printf '%s\n' 'export TEST_SECRET=preserved' >"$secrets_file"
 printf '%s\n' 'https://test-user:test-token@example.com' >"$credentials_file"

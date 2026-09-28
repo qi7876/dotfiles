@@ -47,10 +47,10 @@ migrated; remove them manually before using the new layout.
 
 ## Local configuration
 
-The installer creates these files once with mode `600` and never overwrites or
-removes them:
+The installer creates these files empty when missing, sets mode `600`, and
+never overwrites or removes their contents:
 
-- `~/.git-credentials` (initially empty)
+- `~/.git-credentials`
 - `~/.secrets.zsh`
 - `~/.ssh/config.local`
 
