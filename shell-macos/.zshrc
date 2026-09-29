@@ -3,25 +3,22 @@ PROMPT='%F{4}%n@%m %F{5}%~%f
 
 export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias ll='ls -AlhF'
-alias la='ls -AhF'
 alias l='ls -ChF'
-alias kssh='kitten ssh'
-
-clip() {
-    setopt local_options pipe_fail
-    local data
-    data="$(base64 | tr -d '\n')" || return $?
-    printf '\033]52;c;%s\033\\' "$data" > /dev/tty
-}
-
-ccat() {
-    setopt local_options pipe_fail
-    cat -- "$@" | tee >(clip)
-}
+alias ll='ls -AlhF'
+alias ks='kitten ssh'
+alias v='nvim'
+alias g='git'
+alias gs='git status --short --branch'
+alias gl='git log --graph --decorate --oneline --all'
+alias gb='git branch'
+alias gs='git switch'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias c='cargo'
+alias cb='cargo build'
+alias cr='cargo run'
+alias ct='cargo test'
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=20000
@@ -37,6 +34,20 @@ compinit
 bindkey -e
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"
+
+copy() {
+    setopt local_options pipe_fail
+
+    if (( $# != 1 )); then
+        print -u2 "usage: copy <file>"
+        return 1
+    fi
+
+    local data
+    data="$(base64 < "$1" | tr -d '\n')" || return $?
+
+    printf '\033]52;c;%s\033\\' "$data" > /dev/tty
+}
 
 _mhcurl() {
     : "${MIHOMO_API:?set MIHOMO_API in ~/.secrets.zsh}"
@@ -90,9 +101,6 @@ mh-delay-group() {
     encoded=$(printf '%s' "$group" | jq -sRr @uri) || return $?
     _mhcurl "$MIHOMO_API/group/$encoded/delay?url=https%3A%2F%2Fwww.gstatic.com%2Fgenerate_204&timeout=5000" | jq
 }
-
-alias mh-close='_mhcurl -X DELETE "$MIHOMO_API/connections"'
-alias mh-flush-dns='_mhcurl -X POST "$MIHOMO_API/cache/dns/flush"'
 
 mh-update-provider() {
     local provider="${1:?usage: mh-update-provider <provider>}"

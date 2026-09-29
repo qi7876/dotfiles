@@ -1,14 +1,15 @@
 typeset -U path PATH
 path=(
     "$HOME/.local/bin"
-    "/opt/homebrew/opt/node@24/bin"
     "$HOME/.cargo/bin"
+    "/opt/homebrew/opt/node@24/bin"
+    "/opt/homebrew/opt/rustup/bin"
     $path
 )
 
-export VISUAL='vim'
-export EDITOR='vim'
-export SUDO_EDITOR='vim'
+export VISUAL='nvim'
+export EDITOR='nvim'
+export SUDO_EDITOR='nvim'
 
 export UV_DEFAULT_INDEX='https://mirrors.aliyun.com/pypi/simple/'
 
@@ -22,6 +23,4 @@ export NO_PROXY="$no_proxy"
 
 export MIHOMO_API='http://127.0.0.1:9090'
 
-if [[ -f "$HOME/.secrets.zsh" ]]; then
-    source "$HOME/.secrets.zsh"
-fi
+source "$HOME/.secrets.zsh"
