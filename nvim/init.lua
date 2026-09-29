@@ -1,3 +1,4 @@
+vim.opt.number = true
 vim.opt.scrolloff = 8
 vim.opt.mouse = "a"
 
