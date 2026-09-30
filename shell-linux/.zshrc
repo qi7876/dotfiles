@@ -8,15 +8,7 @@ alias ll='ls -AlhF'
 alias ks='kitten ssh'
 alias v='nvim'
 alias g='git'
-alias gs='git status --short --branch'
-alias gl='git log --graph --decorate --oneline --all'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
 alias c='cargo'
-alias cb='cargo build'
-alias cr='cargo run'
-alias ct='cargo test'
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=20000

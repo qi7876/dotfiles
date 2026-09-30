@@ -15,6 +15,9 @@
 [diff]
     algorithm = histogram
     colorMoved = default
+[alias]
+    st = status --short --branch
+    lg = log --graph --decorate --oneline --all
 [http]
 	proxy = http://127.0.0.1:7890
 [https]
