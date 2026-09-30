@@ -1,222 +1,126 @@
-## How to Code
+# How to Code
 
-核心目标：
+> 优先优化反馈周期：小步修改、快速验证、保持系统可运行和主线可集成；只为已经出现的问题增加复杂度。
 
-> 优先优化反馈周期。保持修改小、系统可运行、主线可集成；只为已经出现的问题增加复杂度。
+选择简单、明确、可验证、易维护的方案。按实际收益增加流程、测试、抽象和文档。
 
-优先选择简单、明确、可验证、易维护的方案。不要为了未来需求提前建立复杂架构，也不要机械增加流程、测试、抽象或文档。
+## Workflow
 
-## Development Workflow
-
-采用小步迭代：
+基本循环：
 
 ```text
-理解需求
-→ 阅读相关代码和约定
-→ 确认当前行为
-→ 选择最小可行修改
-→ 实现
-→ 验证实际结果
-→ 必要时重构
-→ 下一小步
+理解需求 → 阅读相关代码 → 确认当前行为 → 最小可行修改 → 验证 → 必要时重构
 ```
 
-遵循：
+- **小步迭代**：大型需求拆成可独立实现、验证和合入的步骤。
+- **快速反馈**：尽早使用编译器、类型检查、针对性测试或实际运行确认结果。
+- **遵循现有约定**：修改前按需查看 README、配置、相邻模块、类似实现、测试和 CI；沿用项目的命名、布局、API、错误处理和工具链。
+- **控制范围**：每处修改都服务于当前任务；无关问题和大型重构单独处理。
+- **按需实现**：只实现当前需求，不提前建设框架、插件系统或基础设施。
+- **有证据再抽象**：允许少量局部重复；多个调用方真正共享稳定语义和边界后再抽象。
+- **重构保持行为**：除非明确要求改变，否则保持现有外部行为，并提供相应验证。
 
-1. **Small Changes**：大型需求拆成可独立实现、验证和合入的小步骤。
-1. **Fast Feedback**：修改后尽早运行 compiler、type checker、lint、targeted tests 或实际程序。
-1. **Working Software**：优先通过实际运行确认行为。
-1. **YAGNI**：只实现当前需求，不提前建立 framework、plugin system、generic abstraction 或 infrastructure。
-1. **Evidence Before Abstraction**：重复模式和稳定边界真正出现后再抽象。
-1. **Scope Control**：每一处修改都应属于当前任务；无关问题单独处理。
-1. **Preserve Behavior**：除非明确要求，否则重构保持现有外部行为。
-1. **Existing Code First**：优先遵循已有 naming、layout、API、error、configuration、testing 和 dependency conventions。
+不要仅因另一种实现更现代或更漂亮而重写已有代码。
 
-修改前根据需要检查：
+## Architecture & Documentation
 
-```text
-README
-project configuration
-architecture documents
-tests / CI
-neighboring modules
-similar implementations
-```
+文档解释当前系统，只记录代码难以表达的原因、约束、权衡、运维知识和重要历史决策。
 
-不要仅因为另一种实现“更现代”或“更漂亮”就主动重写已有代码。
+- `README.md`：项目简介、安装、使用、开发方式、当前状态和重要限制。
+- `docs/`：需要单独说明的设计与操作文档。
+- `docs/architecture/`：架构文档。
 
-## Architecture
+代码或行为变化时，按需同步相关文档。注释解释非显然行为、危险假设和外部要求，避免复述代码。
 
-架构文档用于解释当前系统，而不是预测未来系统。
+### C4 与其他视图
 
-只记录难以从代码直接理解的信息，以及重要 constraints 和 trade-offs。
+通常长期维护 C1、C2；简单项目只保留有解释价值的视图。
 
-统一放在：
+| 层级 | 内容与维护方式 |
+| --- | --- |
+| C1 — System Context | 用户、系统职责及外部系统 |
+| C2 — Container | 主要运行单元、职责、通信方式、协议及主要技术 |
+| C3 — Component | 仅用于复杂、重要且难以从代码理解的 Container |
+| C4 — Code | 默认以代码为准，不长期维护独立图 |
 
-```text
-docs/architecture/
-```
+按需补充运行时交互、部署、系统间关系、状态机、数据关系、控制流或数据流视图。
 
-### C4
+架构随真实需求演化：直接实现 → 重复需求 → 稳定边界 → 抽象。
 
-长期维护：
+## Verification & CI
 
-- **C1 — System Context**：用户、系统职责、外部系统。
-- **C2 — Container**：主要运行单元及 responsibility、communication、protocol、major technology。
+目标是以较低维护成本获得足够信心，不追求任意覆盖率，也不强制每次修改增加测试。
 
-按需维护：
+### 选择验证方式
 
-- **C3 — Component**：仅用于复杂、重要且难以从代码理解的 Container。
-- **C4 — Code**：默认以代码本身为准，不长期维护。
-
-其他视图按需使用：
-
-- Dynamic Diagram：运行时交互
-- Deployment Diagram：软件与基础设施
-- System Landscape Diagram：系统间关系
-- State Machine Diagram：状态转换
-- ER Diagram：数据关系
-- Flowchart：控制流
-- Data Flow Diagram：数据流
-
-架构演化优先：
-
-```text
-direct implementation
-→ repeated real need
-→ stable boundary
-→ abstraction
-```
-
-而不是：
-
-```text
-predict future
-→ create abstraction
-→ force current code into it
-```
-
-## Test & Verification
-
-测试的目标是以尽可能低的维护成本提供足够的工程信心，而不是追求覆盖率。
-
-开发过程中优先使用最低成本的有效验证：
-
-```text
-compiler / type checker
-running the program
-small real input
-targeted test
-minimal reproduction
-```
-
-系统稳定后，再逐步完善测试体系。
+开发中优先选择最低成本的有效验证：编译或类型检查、运行程序、小规模真实输入、针对性测试、最小复现。
 
 优先测试：
 
-```text
-stable external behavior
-important invariants
-known failure cases
-critical algorithms
-public interfaces
-```
+- 稳定的外部行为、公共接口和重要不变量。
+- 关键算法、已知失败场景和容易回归的边界情况。
 
-避免测试：
+避免绑定私有实现、临时内部结构或无语义意义的调用顺序。
 
-```text
-private implementation details
-temporary internal structure
-meaningless call order
-arbitrary coverage targets
-```
+按问题选择测试层级：
 
-测试层级：
+- 纯逻辑和算法：单元测试，必要时使用性质测试或差分测试。
+- 模块协作：集成测试。
+- 关键真实路径：少量端到端测试。
 
-- 纯逻辑和算法：unit / property / differential test
-- 模块协作：integration test
-- 关键真实路径：少量 E2E
+尽量使用真实实现、fake 或本地测试实例。只有依赖缓慢、昂贵、不可用、有破坏性、不可控，或需要制造异常场景时才隔离或 mock。
 
-尽量少使用 mock。只有真实依赖 slow、expensive、unavailable、destructive、uncontrollable，或需要制造异常场景时才隔离。优先真实实现、fake 或本地测试实例。
+不强制 TDD；它适合缺陷修复、纯逻辑、算法、稳定 API 和行为明确的功能。
 
-不强制 TDD。它更适合 bug fixing、pure logic、algorithm、stable API 和行为明确的功能。
-
-Bug fixing 优先：
+修复缺陷时优先：
 
 ```text
-reproduce
-→ regression case
-→ fix
-→ verify
+复现 → 建立回归用例 → 修复 → 验证
 ```
 
-完成修改前选择与当前变化相关的检查，通常从便宜到昂贵：
+### 完成前检查
+
+选择与修改相关的检查，通常从便宜到昂贵：
 
 ```text
-format / lint / type check
-→ targeted test
-→ integration test
-→ build
-→ full test suite
-→ runtime verification
+format / lint / type check → targeted tests → integration tests → build → full suite
 ```
 
-不要因为 code compiles 或 all tests pass 就直接认为行为正确。
+按需补充实际运行验证；编译成功或测试通过本身不能证明目标行为正确。
+
+### CI 与发布
+
+- CI 自动执行必要验证，缩短反馈周期并阻止明显错误进入主线。
+- 优先维护已有方案；按需提供统一检查入口，如 `make check` 或 `scripts/check`。
+- 检查应快速、确定、可复现且与项目相关；避免缓慢、不稳定、重复或低价值任务。
+- 没有远程仓库时维护本地验证；有远程仓库时先检查现有 CI，按明确需求补充。
+- 默认手动发布；有明确需求时再增加 CD。
 
 ## Git
 
-采用 Trunk-Based Development 风格，以 `main` 作为唯一长期主线。
+采用 Trunk-Based Development 风格，以 `main` 为唯一长期主线，保持可构建、可测试、可集成。
 
-`main` 应保持：
-
-```text
-buildable
-testable
-integratable
-```
-
-理想情况下可发布，但：
-
-```text
-merge != release
-```
-
-未准备开放的功能优先通过 feature flag、internal implementation 或 unexposed API 提前集成，而不是维护长期 feature branch。
+合入与发布分开。尚未开放的功能可通过 feature flag、内部实现或未公开 API 提前集成。
 
 ### Commit
 
-推荐：
+推荐格式：
 
 ```text
 <subsystem>: <imperative description>
 ```
 
-例如：
-
-```text
-scheduler: avoid scanning inactive requests
-attention: handle empty sequences
-```
-
-commit message 应 concise、specific、imperative。
-
-当原因或 trade-off 不明显时，在 body 中说明 `why`。
+例如：`attention: handle empty sequences`。描述简洁、具体，使用祈使句；原因或权衡不明显时在正文说明。
 
 ### Branch & PR
 
-从最新 `main` 创建短期分支：
+- 从最新 `main` 创建短期分支，如 `feat/...`、`fix/...`、`refactor/...`；生命周期尽量为数小时到几天。
+- 一个 PR 对应一个清晰的逻辑修改；大型需求拆成多个可独立合入的 PR。
+- PR 描述说明问题、目的、实现方式、重要决策或权衡，以及验证结果。
+- 合入前通常要求 CI 和代码审查通过、与最新 `main` 无冲突、没有无关修改。
+- 默认 squash merge，让一个 PR 对应主线上的一个逻辑提交；合并后删除无用分支。
 
-```text
-feat/...
-fix/...
-refactor/...
-```
-
-生命周期尽量控制在数小时到几天。
-
-大型需求拆成多个可独立合入的 logical change。
-
-个人独占分支同步：
+个人独占分支可用 rebase 同步：
 
 ```bash
 git fetch origin
@@ -225,287 +129,45 @@ git rebase origin/main
 
 不要 rebase 已被多人依赖的公共历史。
 
-一个 PR 应代表：
-
-```text
-one clear logical change
-```
-
-PR description 说明：
-
-```text
-problem
-purpose
-approach
-important decisions / trade-offs
-```
-
-合入前通常要求：
-
-- CI 通过
-- Code Review 通过
-- 与最新 `main` 无冲突
-- 没有无关修改
-
-默认使用 squash merge：
-
-```text
-1 PR
-=
-1 logical change
-=
-1 commit on main
-```
-
-合并后删除无用分支。
-
-## Documentation
-
-文档是代码的辅助，不是代码的替代。
-
-默认维护：
-
-```text
-README.md
-```
-
-说明项目简介、安装、使用、开发方式、当前状态和重要限制。
-
-复杂设计放入：
-
-```text
-docs/
-```
-
-架构统一放入：
-
-```text
-docs/architecture/
-```
-
-文档优先记录代码无法直接表达的：
-
-```text
-why
-constraints
-trade-offs
-operational knowledge
-historical decisions
-```
-
-如果代码已经能够清楚表达实现，不要重复写文档。
-
-## CI/CD
-
-CI 的目标是缩短反馈周期，并阻止明显错误进入主线。
-
-不要为了“拥有 CI”建设复杂 CI。
-
-优先检查：
-
-```text
-format
-lint
-type check
-test
-build
-```
-
-如果合适，提供统一入口：
-
-```text
-make check
-just check
-task check
-scripts/check
-```
-
-已有工具链和 CI 时优先维护现有方案。
-
-没有 remote repository 时只维护本地验证；存在 remote 时先检查现有 CI，没有明确需求时不主动增加复杂远程 CI。
-
-CI 应尽量：
-
-```text
-fast
-deterministic
-reproducible
-relevant
-```
-
-避免 slow、flaky、duplicated 或 low-value 任务。
-
-默认手动发布。只有明确需要时才增加 CD。
-
 ## Coding
 
-编码优先保证：
+优先保证正确性、清晰性、简单性、可维护性，并让失败可观察。
 
-```text
-correctness
-clarity
-simplicity
-maintainability
-observability of failure
-```
+### 类型与不变量
 
-### Simplicity
+- 用类型表达真实约束，避免为类型技巧建设复杂泛型体系。
+- 用类型、断言、输入校验或测试明确重要不变量。
+- 理论上不允许的状态应明确暴露，不要默默兼容。
 
-简单直接的实现通常优于 premature framework。
+### 错误处理
 
-少量、局部、尚未稳定的重复可以接受。只有多个调用方真正共享稳定语义时再抽象。
+- 不吞掉错误、不制造假成功。
+- 除非产品语义明确要求，否则不使用静默回退、任意默认值或忽略异常后继续运行。
+- 根据语义返回或抛出错误、传播异常，或断言不变量。
+- 错误信息包含定位问题所需的上下文。
 
-优先：
+### 依赖与工具链
 
-```text
-duplication
-```
+优先标准库、已有依赖和项目工具链。新依赖应解决现有工具无法有效解决的问题，并在维护状态、引入成本和实际价值上有明确净收益。
 
-而不是：
+不要为少量辅助代码引入大型依赖；新增工具优先选择稳定、维护良好的方案。
 
-```text
-wrong abstraction
-```
+### 性能
 
-修改尽量局部化，不要因为修改一个函数而顺手重新设计整个 subsystem。
+测量 → 定位瓶颈 → 优化 → 再测量。用测量指导优化，同时验证正确性。
 
-### Types & Invariants
+### 长时间任务
 
-尽量让类型表达真实约束，但不要为了类型技巧制造复杂泛型体系。
+持续产生结果的长时间任务，按需保存 checkpoint、已完成 ID、中间结果和必要元数据，支持恢复。
 
-重要不变量优先通过：
+恢复时明确区分已完成、未完成和无效状态，不猜测进度。
 
-```text
-type system
-assertion
-validation
-test
-```
+## Done
 
-表达。
+完成前确认：
 
-理论上不允许出现的状态不要默默兼容。
+- 请求的行为已实现，相关行为已验证，必要检查通过。
+- 错误处理明确，无无关修改或不必要复杂度。
+- 有价值的测试和必要文档已同步，修改可安全集成到 `main`。
 
-### Error Handling
-
-不要擅自吞掉错误或制造假成功。
-
-除非产品语义明确要求，否则避免：
-
-```text
-silent fallback
-arbitrary default
-ignore exception
-hide error and continue
-fake success
-```
-
-违反预期状态时应明确：
-
-```text
-return / raise error
-propagate exception
-assert invariant
-```
-
-错误信息应包含定位问题所需的上下文。
-
-### Dependency
-
-优先：
-
-```text
-standard library
-existing project dependencies
-```
-
-增加 dependency 前确认：
-
-```text
-existing tools are insufficient
-dependency provides meaningful value
-dependency is maintained
-cost is acceptable
-```
-
-不要为了少量辅助代码引入大型依赖。
-
-### Comments & Refactoring
-
-注释优先解释：
-
-```text
-why
-constraint
-non-obvious behavior
-dangerous assumption
-external requirement
-```
-
-不要重复代码本身。
-
-当前范围内可以持续重构，但必须：
-
-```text
-behavior preserved
-scope controlled
-validation available
-```
-
-大型或无关重构应独立处理。
-
-### Performance
-
-不要根据直觉优化。
-
-优先：
-
-```text
-measure
-→ identify bottleneck
-→ optimize
-→ measure again
-```
-
-性能优化必须同时保证正确性。
-
-### Long-Running Jobs
-
-长时间运行并持续产生结果的任务应根据需要支持：
-
-```text
-checkpoint
-processed index
-completed IDs
-intermediate output
-metadata
-```
-
-恢复时明确区分 completed、incomplete 和 invalid 状态，不要猜测进度。
-
-## Toolchain
-
-优先使用现代、稳定、维护良好的工具链，并遵循项目已有选择，例如：
-
-1. Python：uv、pytest、ruff、basedpyright
-1. rust：cargo、clippy、fmt
-1. Typescript：Node LTS、Vite
-1. GPU：Triton
-
-## Definition of Done
-
-一个修改通常只有在以下条件满足后才算完成：
-
-```text
-requested behavior implemented
-relevant behavior verified
-errors handled explicitly
-no unnecessary complexity
-tests updated when valuable
-relevant checks pass
-documentation updated when necessary
-no unrelated changes
-cleanly integratable into main
-```
-
-不是所有任务都必须增加测试、文档或架构图。只做真正提高正确性、反馈速度和长期可维护性的工作。
+只增加真正提高正确性、反馈速度和长期可维护性的工作。
