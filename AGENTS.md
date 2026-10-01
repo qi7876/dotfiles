@@ -98,6 +98,7 @@ format / lint / type check → targeted tests → integration tests → build �
 
 ### Branch & PR
 
+- 实现任何需求、改动任何代码前都应该创建新分支，一个分支只负责一个 Scope，需求完成后提 PR。
 - 从最新 `main` 创建短期分支，如 `feat/...`、`fix/...`、`refactor/...`；生命周期尽量为数小时到几天。
 - 一个 PR 对应一个清晰的逻辑修改；大型需求拆成多个可独立合入的 PR。
 - PR 描述说明问题、目的、实现方式、重要决策或权衡，以及验证结果。
