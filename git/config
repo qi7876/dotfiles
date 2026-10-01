@@ -3,14 +3,15 @@
     email = 97651950+qi7876@users.noreply.github.com
 [init]
     defaultBranch = main
-[pull]
-    ff = only
 [fetch]
     prune = true
+[pull]
+    ff = only
 [push]
     default = simple
     autoSetupRemote = true
 [merge]
+    ff = only
     conflictStyle = zdiff3
 [diff]
     algorithm = histogram
@@ -19,8 +20,8 @@
     st = status --short --branch
     lg = log --graph --decorate --oneline --all
 [http]
-	proxy = http://127.0.0.1:7890
+    proxy = http://127.0.0.1:7890
 [https]
-	proxy = http://127.0.0.1:7890
+    proxy = http://127.0.0.1:7890
 [credential]
-	helper = store --file ~/.config/git/credentials
+    helper = store --file ~/.config/git/credentials
