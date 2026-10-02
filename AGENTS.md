@@ -1,156 +1,156 @@
 ## Workflow
 
-基本循环：理解需求 → 阅读相关代码 → 确认当前行为 → 最小可行修改 → 验证 → 必要时重构
+Basic loop: understand the requirements → read the relevant code → confirm current behavior → make the smallest viable change → verify → refactor if needed
 
-- 小步迭代：大型需求拆成可独立实现、验证和合入的步骤
-- 快速反馈：尽早使用编译器、类型检查、针对性测试或实际运行确认结果
-- 遵循现有约定：修改前按需查看 README、配置、相邻模块、类似实现、测试和 CI；沿用项目的命名、布局、API、错误处理和工具链
-- 控制范围：每处修改都服务于当前任务；无关问题和大型重构单独处理
-- 按需实现：只实现当前需求，不提前假设框架、插件系统或基础设施
-- 谨慎抽象：允许少量局部重复；只在多个调用方真正共享稳定语义和边界后再抽象
-- 重构后行为一致：除非明确要求改变，否则重构应保持现有外部行为，并用相关测试验证
+- Iterate in small steps: break large requirements into steps that can be implemented, verified, and merged independently.
+- Get fast feedback: use compilation, type checking, targeted tests, or actual execution early to confirm results.
+- Follow existing conventions: before making changes, review the README, configuration, neighboring modules, similar implementations, tests, and CI as needed; follow the project's naming, layout, APIs, error handling, and toolchain.
+- Control scope: every change should serve the current task; handle unrelated issues and large refactors separately.
+- Implement only what is needed: address current requirements without anticipating frameworks, plugin systems, or infrastructure.
+- Abstract carefully: allow a little local duplication; introduce abstractions only after multiple callers actually share stable semantics and boundaries.
+- Preserve behavior when refactoring: unless a change is explicitly requested, preserve existing external behavior and verify it with relevant tests.
 
 ## Architecture & Documentation
 
-文档解释当前系统，只记录代码难以表达的原因、约束、权衡、运维知识和重要历史决策。
+Documentation explains the current system. Record only rationale, constraints, tradeoffs, operational knowledge, and important historical decisions that code cannot readily express.
 
 - `README.md`
-  - 项目管理方面：项目 Goal、当前 Milestone 及验收条件
-  - 软件方面：简介、安装、使用、开发方式、当前状态和重要限制
-- `docs/`：需要单独说明的设计与操作文档
-- `docs/architecture/`：架构文档
+  - Project management: the project goal, current milestone, and acceptance criteria.
+  - Software: introduction, installation, usage, development workflow, current status, and important limitations.
+- `docs/`: design and operational documentation that needs a separate explanation.
+- `docs/architecture/`: architecture documentation.
 
-代码或行为变化时，按需同步相关文档。注释解释非显然行为、危险假设和外部要求，避免复述代码。
+When code or behavior changes, update relevant documentation as needed. Comments should explain non-obvious behavior, dangerous assumptions, and external requirements rather than restating the code.
 
-### C4 与其他视图
+### C4 and Other Views
 
-通常长期维护 C1、C2；简单项目只保留有解释价值的视图。
+Usually maintain C1 and C2 over the long term; for simple projects, retain only views that help explain the system.
 
-1. C1 — System Context：用户、系统职责及外部系统
-1. C2 — Container：主要运行单元、职责、通信方式、协议及主要技术
-1. C3 — Component：仅用于复杂、重要且难以从代码理解的 Container
-1. C4 — Code：默认以代码为准，不长期维护独立图
+1. C1 — System Context: users, system responsibilities, and external systems.
+1. C2 — Container: major runtime units, responsibilities, communication methods, protocols, and key technologies.
+1. C3 — Component: only for containers that are complex, important, and difficult to understand from code.
+1. C4 — Code: use code as the source of truth by default; do not maintain separate diagrams over the long term.
 
-按需补充运行时交互、部署、系统间关系、状态机、数据关系、控制流或数据流视图。
+Add views of runtime interactions, deployment, relationships between systems, state machines, data relationships, control flow, or data flow as needed.
 
-架构随真实需求演化：直接实现 → 重复需求 → 稳定边界 → 抽象。
+Let architecture evolve with real requirements: direct implementation → recurring requirements → stable boundaries → abstraction.
 
 ## Verification & CI
 
-目标是以较低维护成本获得足够信心，不追求任意覆盖率，也不强制每次修改增加测试。
+Aim for sufficient confidence at a low maintenance cost. Do not pursue arbitrary coverage targets or require new tests for every change.
 
-### 选择验证方式
+### Choosing Verification Methods
 
-开发中优先选择最低成本的有效验证：编译或类型检查、运行程序、小规模真实输入、针对性测试、最小复现。
+During development, prefer the lowest-cost effective verification: compilation or type checking, running the program, small samples of real input, targeted tests, or minimal reproductions.
 
-优先测试：
+Prioritize testing:
 
-- 稳定的外部行为、公共接口和重要不变量
-- 关键算法、已知失败场景和容易回归的边界情况
+- Stable external behavior, public interfaces, and important invariants.
+- Critical algorithms, known failure scenarios, and edge cases prone to regression.
 
-避免绑定私有实现、临时内部结构或无语义意义的调用顺序
+Avoid coupling tests to private implementations, temporary internal structures, or call ordering that has no semantic significance.
 
-按问题选择测试层级：
+Choose the test level based on the problem:
 
-- 纯逻辑和算法：单元测试，必要时使用性质测试或差分测试
-- 模块协作：集成测试，Property-based Testing
-- 关键真实路径：少量端到端测试，Property-based Testing
+- Pure logic and algorithms: unit tests, with property-based or differential testing when needed.
+- Module collaboration: integration tests and property-based testing.
+- Critical real-world paths: a small number of end-to-end tests and property-based testing.
 
-尽量使用真实实现、fake 或本地测试实例。只有依赖缓慢、昂贵、不可用、有破坏性、不可控，或需要制造异常场景时才隔离或 mock。
+Use real implementations, fakes, or local test instances whenever possible. Isolate or mock dependencies only when they are slow, expensive, unavailable, destructive, uncontrollable, or when exceptional scenarios must be simulated.
 
-不强制 TDD，它适合缺陷修复、纯逻辑、算法、稳定 API 和行为明确的功能。
+TDD is not mandatory. It is well suited to bug fixes, pure logic, algorithms, stable APIs, and features with clearly defined behavior.
 
-修复缺陷时优先：复现 → 建立回归用例 → 修复 → 验证
+When fixing bugs, prefer: reproduce → add a regression case → fix → verify.
 
-### 完成前检查
+### Checks Before Completion
 
-选择与修改相关的检查，通常从便宜到昂贵：
+Choose checks relevant to the change, usually from cheapest to most expensive:
 
 ```text
 format / lint / type check → targeted tests → integration tests → build → full suite
 ```
 
-按需补充实际运行验证；编译成功或测试通过本身不能证明目标行为正确。
+Add verification through actual execution as needed; successful compilation or passing tests alone does not prove that the intended behavior is correct.
 
-### CI 与发布
+### CI and Releases
 
-- CI 自动执行必要验证，缩短反馈周期并阻止明显错误进入主线。
-- 优先维护已有方案；按需提供统一检查入口，如 `make check` 或 `scripts/check`。
-- 检查应快速、确定、可复现且与项目相关；避免缓慢、不稳定、重复或低价值任务。
-- 没有远程仓库时维护本地验证；有远程仓库时先检查现有 CI，按明确需求补充。
-- 默认手动发布；有明确需求时再增加 CD。
+- CI should automatically run necessary checks, shorten the feedback cycle, and prevent obvious errors from entering the mainline.
+- Prefer maintaining the existing setup; provide a unified check entry point such as `make check` or `scripts/check` as needed.
+- Checks should be fast, deterministic, reproducible, and relevant to the project; avoid slow, unstable, redundant, or low-value tasks.
+- Without a remote repository, maintain local verification; with a remote repository, inspect existing CI first and extend it based on explicit requirements.
+- Release manually by default; add CD only when there is an explicit need.
 
 ## Git
 
-采用 Trunk-Based Development 风格，以 `main` 为唯一长期主线，保持可构建、可测试、可集成。
+Use Trunk-Based Development, with `main` as the only long-lived mainline, and keep it buildable, testable, and ready for integration.
 
-合入与发布分开。尚未开放的功能可通过 feature flag、内部实现或未公开 API 提前集成。
+Separate merging from releasing. Features that are not yet available can be integrated early through feature flags, internal implementations, or unpublished APIs.
 
 ### Commit
 
-推荐格式：
+Recommended format:
 
 ```text
 <subsystem>: <imperative description>
 ```
 
-例如：`attention: handle empty sequences`。描述简洁、具体，使用祈使句；原因或权衡不明显时在正文说明。
+For example: `attention: handle empty sequences`. Keep descriptions concise and specific, and use the imperative mood; explain rationale or tradeoffs in the body when they are not obvious.
 
 ### Branch & PR
 
-- 实现任何需求、改动任何代码前都应该创建新分支，一个分支只负责一个 Scope，需求完成后提 PR。
-- 从最新 `main` 创建短期分支，如 `feat/...`、`fix/...`、`refactor/...`；生命周期尽量为数小时到几天。
-- 一个 PR 对应一个清晰的逻辑修改；大型需求拆成多个可独立合入的 PR。
-- PR 描述说明问题、目的、实现方式、重要决策或权衡，以及验证结果。
-- 合入前通常要求 CI 和代码审查通过、与最新 `main` 无冲突、没有无关修改。
-- 默认 squash merge，让一个 PR 对应主线上的一个逻辑提交；合并后删除无用分支。
+- Create a new branch before implementing any requirement or changing any code. Each branch should cover one scope; open a PR when the work is complete.
+- Create short-lived branches from the latest `main`, such as `feat/...`, `fix/...`, or `refactor/...`; aim for lifetimes of a few hours to a few days.
+- Each PR should represent one clear logical change; split large requirements into multiple PRs that can be merged independently.
+- PR descriptions should explain the problem, purpose, implementation, important decisions or tradeoffs, and verification results.
+- Before merging, normally require passing CI and code review, no conflicts with the latest `main`, and no unrelated changes.
+- Use squash merge by default so each PR corresponds to one logical commit on the mainline; delete branches that are no longer needed after merging.
 
-个人独占分支可用 rebase 同步：
+Branches used exclusively by one person can be synchronized with rebase:
 
 ```bash
 git fetch origin
 git rebase origin/main
 ```
 
-不要 rebase 已被多人依赖的公共历史。
+Do not rebase public history that multiple people already depend on.
 
 ## Coding
 
-优先保证正确性、清晰性、简单性、可维护性，并让失败可观察。
+Prioritize correctness, clarity, simplicity, and maintainability, and make failures observable.
 
-### 类型与不变量
+### Types and Invariants
 
-- 用类型表达真实约束，避免为类型技巧建设复杂泛型体系。
-- 用类型、断言、输入校验或测试明确重要不变量。
-- 理论上不允许的状态应明确暴露，不要默默兼容。
+- Use types to express real constraints; avoid building complex generic systems merely for type-level tricks.
+- Make important invariants explicit through types, assertions, input validation, or tests.
+- Expose states that should be impossible rather than silently accommodating them.
 
-### 错误处理
+### Error Handling
 
-- 不吞掉错误、不制造假成功。
-- 除非产品语义明确要求，否则不使用静默回退、任意默认值或忽略异常后继续运行。
-- 根据语义返回或抛出错误、传播异常，或断言不变量。
-- 错误信息包含定位问题所需的上下文。
+- Do not swallow errors or report false success.
+- Unless product semantics explicitly require it, do not use silent fallbacks, arbitrary defaults, or continue after ignoring exceptions.
+- Return or throw errors, propagate exceptions, or assert invariants according to the intended semantics.
+- Include the context needed to locate the problem in error messages.
 
-### 依赖与工具链
+### Dependencies and Toolchain
 
-优先标准库、已有依赖和项目工具链。新依赖应解决现有工具无法有效解决的问题，并在维护状态、引入成本和实际价值上有明确净收益。
+Prefer the standard library, existing dependencies, and the project's toolchain. New dependencies should solve problems that existing tools cannot handle effectively and provide a clear net benefit considering maintenance status, adoption cost, and practical value.
 
-不要为少量辅助代码引入大型依赖；新增工具优先选择稳定、维护良好的方案。
+Do not introduce large dependencies for a small amount of helper code; prefer stable, well-maintained options when adding tools.
 
-### 性能
+### Performance
 
-测量 → 定位瓶颈 → 优化 → 再测量。用测量指导优化，同时验证正确性。
+Measure → locate the bottleneck → optimize → measure again. Let measurements guide optimization, and verify correctness at the same time.
 
-### 长时间任务
+### Long-Running Tasks
 
-持续产生结果的长时间任务，按需保存 checkpoint、已完成 ID、中间结果和必要元数据，支持恢复。恢复时明确区分已完成、未完成和无效状态，不猜测进度。
+For long-running tasks that produce results continuously, save checkpoints, completed IDs, intermediate results, and necessary metadata as needed to support resumption. When resuming, clearly distinguish completed, incomplete, and invalid states; do not guess progress.
 
 ## Done
 
-完成前确认：
+Before finishing, confirm:
 
-- 请求的行为已实现，相关行为已验证，必要检查通过。
-- 错误处理明确，无无关修改或不必要复杂度。
-- 有价值的测试和必要文档已同步，修改可安全集成到 `main`。
+- The requested behavior is implemented, relevant behavior is verified, and necessary checks pass.
+- Error handling is explicit, with no unrelated changes or unnecessary complexity.
+- Valuable tests and necessary documentation are updated, and the change can be safely integrated into `main`.
 
-只增加真正提高正确性、反馈速度和长期可维护性的工作。
+Add only work that actually improves correctness, feedback speed, and long-term maintainability.
