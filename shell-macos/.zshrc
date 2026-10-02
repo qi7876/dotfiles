@@ -13,6 +13,7 @@ alias c='cargo'
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=20000
 SAVEHIST=10000
+KEYTIMEOUT=5
 
 setopt INC_APPEND_HISTORY
 setopt HIST_IGNORE_DUPS
@@ -21,7 +22,6 @@ setopt HIST_IGNORE_SPACE
 autoload -Uz compinit
 compinit
 
-bindkey -e
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"
 
