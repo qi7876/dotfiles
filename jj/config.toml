@@ -1,0 +1,11 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+[user]
+name = "qi7876"
+email = "qi7876@gmail.com"
+
+[git]
+fetch = "origin"
+push = "origin"
+
+[ui]
+merge-editor = "vscode"

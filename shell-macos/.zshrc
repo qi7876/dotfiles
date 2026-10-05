@@ -6,9 +6,6 @@ export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.c
 alias l='ls -ChF'
 alias ll='ls -AlhF'
 alias ks='kitten ssh'
-alias v='nvim'
-alias g='git'
-alias c='cargo'
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=20000
@@ -46,11 +43,6 @@ _mhcurl() {
     else
         command curl -fsS "$@"
     fi
-}
-
-mh-ver() {
-    setopt local_options pipe_fail
-    _mhcurl "$MIHOMO_API/version" | jq
 }
 
 mh-status() {

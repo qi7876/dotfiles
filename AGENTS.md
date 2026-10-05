@@ -80,13 +80,26 @@ Add verification through actual execution as needed; successful compilation or p
 - Without a remote repository, maintain local verification; with a remote repository, inspect existing CI first and extend it based on explicit requirements.
 - Release manually by default; add CD only when there is an explicit need.
 
-## Git
+## Version Control (jj + Git)
 
-Use Trunk-Based Development, with `main` as the only long-lived mainline, and keep it buildable, testable, and ready for integration.
+Use Jujutsu (`jj`) in a colocated Git repository: `.jj` and `.git` share the same working tree. Use `jj` for everyday version-control operations and repository writes. Use Git for read-only inspection and Git-compatible tools for hosting, PRs, and integrations; avoid Git commands that mutate the index, working tree, history, or refs.
+
+When setting up a repository, use `jj git init --colocate` for an existing Git checkout without jj, or `jj git clone --colocate <repository> <directory>` for a new checkout. Do not reinitialize a repository that already has jj configured.
+
+Use Trunk-Based Development, with `main@origin` as the only long-lived mainline, and keep it buildable, testable, and ready for integration.
 
 Separate merging from releasing. Features that are not yet available can be integrated early through feature flags, internal implementations, or unpublished APIs.
 
-### Commit
+### Working Copy & Changes
+
+- Inspect `jj status`, `jj diff`, and `jj log` before making changes. Preserve existing user work and continue in the current workspace unless isolation is requested or necessary.
+- For a new, independent task, fetch the latest mainline with `jj git fetch --remote origin`, then start a change with `jj new main@origin`. When continuing existing work, keep the current change and base. Each change should cover one scope.
+- `@` is the working-copy change; `@-` is its parent. jj snapshots working-copy edits automatically when commands run, so routine work does not require Git staging or stashing.
+- Use `jj describe -m '<description>'` to describe the current change. Use `jj new` to start the next change, or `jj commit -m '<description>'` to describe the current change and start a new one in a single step.
+- Git's detached `HEAD` is normal in a colocated repository. jj synchronizes Git state automatically; prefer jj commands for committing, switching changes, rebasing, and remote synchronization.
+- Resolve conflicts in the affected files and confirm the result with `jj status` and `jj diff` before continuing or pushing.
+
+### Change Descriptions
 
 Recommended format:
 
@@ -96,23 +109,33 @@ Recommended format:
 
 For example: `attention: handle empty sequences`. Keep descriptions concise and specific, and use the imperative mood; explain rationale or tradeoffs in the body when they are not obvious.
 
-### Branch & PR
+### Bookmarks & PRs
 
-- Create a new branch before implementing any requirement or changing any code. Each branch should cover one scope; open a PR when the work is complete.
-- Create short-lived branches from the latest `main`, such as `feat/...`, `fix/...`, or `refactor/...`; aim for lifetimes of a few hours to a few days.
+- Use short-lived bookmarks such as `feat/...`, `fix/...`, or `refactor/...` for publishing changes as Git branches; aim for lifetimes of a few hours to a few days. A bookmark is not required to begin local work.
+- Bookmarks follow rewritten changes but do not automatically advance to a newly created child. Set the bookmark explicitly to the intended PR tip before pushing.
+- After `jj commit` creates a new working-copy change, publish the parent change with:
+
+  ```bash
+  jj bookmark set feat/example --revision @-
+  jj git push --remote origin --bookmark feat/example
+  ```
+
+  If the change to publish is still at `@`, use `--revision @` instead. Push only the task's bookmark and open a draft PR early, once there is an initial change to review, using GitHub tooling such as `gh pr create --draft --head feat/example --base main`.
+- Push updates to the task's bookmark throughout development, moving it to the intended PR tip whenever new changes are added.
 - Each PR should represent one clear logical change; split large requirements into multiple PRs that can be merged independently.
-- PR descriptions should explain the problem, purpose, implementation, important decisions or tradeoffs, and verification results.
+- Keep the PR title and description current as the work evolves. The description should explain the current problem, purpose, implementation, important decisions or tradeoffs, verification results, and remaining work while the PR is a draft.
+- Mark the draft PR ready for review when the intended work is complete and relevant checks pass.
 - Before merging, normally require passing CI and code review, no conflicts with the latest `main`, and no unrelated changes.
-- Use squash merge by default so each PR corresponds to one logical commit on the mainline; delete branches that are no longer needed after merging.
+- Use squash merge by default so each PR corresponds to one logical commit on the mainline; delete local bookmarks and remote branches that are no longer needed after merging.
 
-Branches used exclusively by one person can be synchronized with rebase:
+Changes used exclusively by one person can be synchronized with rebase. For a published task bookmark:
 
 ```bash
-git fetch origin
-git rebase origin/main
+jj git fetch --remote origin
+jj rebase -b feat/example -o main@origin
 ```
 
-Do not rebase public history that multiple people already depend on.
+Inspect the affected changes and resolve any conflicts before pushing the bookmark again. Do not rewrite shared history that multiple people already depend on.
 
 ## Coding
 

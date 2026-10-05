@@ -11,9 +11,9 @@ files themselves contain no runtime platform detection or shared fragments.
 
 ## Prerequisites
 
-- Git, Zsh, fzf, zoxide, jq, tmux, Neovim, ripgrep, and OpenSSH
-- macOS: `brew install fzf zoxide jq tmux neovim ripgrep`
-- Debian/Ubuntu: install the equivalent packages with `apt`
+- Jujustu, Git, Zsh, fzf, zoxide, jq, tmux, Neovim, ripgrep, and OpenSSH
+- macOS: `brew install jj fzf zoxide jq tmux neovim ripgrep`
+- Ubuntu: install the equivalent packages with `apt`
 
 Kitty configuration is deployed only on macOS.
 
@@ -22,7 +22,6 @@ Kitty configuration is deployed only on macOS.
 ```sh
 git clone <repository> ~/projects/dotfiles
 cd ~/projects/dotfiles
-./scripts/check.sh
 ./scripts/install.sh
 ```
 
@@ -88,15 +87,14 @@ histories, backups, and editor state are never tracked.
 
 ## Development
 
-Run all local checks with `./scripts/check.sh`. The maintained architecture
-views are the [system context](docs/architecture/system-context.md) and
+The maintained architecture views are the
+[system context](docs/architecture/system-context.md) and
 [container](docs/architecture/container.md) diagrams.
 
 ## Status
 
 - macOS and Linux use separate Zsh packages; Kitty is installed on macOS only.
 - Install, uninstall, and local checks run against the complete package set.
-- The repository has a GitHub remote and no remote CI workflow.
 
 ## Next
 
