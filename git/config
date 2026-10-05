@@ -1,24 +1,12 @@
 [user]
     name = qi7876
     email = qi7876@gmail.com
-[init]
-    defaultBranch = main
-[fetch]
-    prune = true
-[pull]
-    ff = only
-[push]
-    default = simple
-    autoSetupRemote = true
-[merge]
-    ff = only
-    conflictStyle = zdiff3
-[diff]
-    algorithm = histogram
-    colorMoved = default
+
 [http]
     proxy = http://127.0.0.1:7890
+
 [https]
     proxy = http://127.0.0.1:7890
+
 [credential]
     helper = store --file ~/.config/git/credentials
