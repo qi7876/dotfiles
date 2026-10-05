@@ -3,6 +3,7 @@
 managed_links() {
     link_action=$1
 
+    "$link_action" "$repo_dir/jj/config.toml" "$target/.config/jj/config.toml"
     "$link_action" "$repo_dir/git/config" "$target/.config/git/config"
     "$link_action" "$repo_dir/tmux/tmux.conf" "$target/.config/tmux/tmux.conf"
     "$link_action" "$repo_dir/nvim/init.lua" "$target/.config/nvim/init.lua"

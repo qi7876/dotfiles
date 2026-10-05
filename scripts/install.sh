@@ -102,8 +102,7 @@ credentials_file="$target/.config/git/credentials"
 secrets_file="$target/.secrets.zsh"
 ssh_local_file="$target/.ssh/config.local"
 check_directory "$target"
-for config_dir in "$target/.config" "$target/.config/git" \
-    "$target/.config/tmux" "$target/.config/nvim" "$target/.ssh"; do
+for config_dir in "$target/.config" "$target/.config/jj" "$target/.config/git" "$target/.config/tmux" "$target/.config/nvim" "$target/.ssh"; do
     check_directory "$config_dir"
 done
 if [ "$kernel_name" = Darwin ]; then
@@ -129,8 +128,7 @@ fi
 
 umask 077
 mkdir -p "$target"
-mkdir -p "$target/.config/git" "$target/.config/tmux" \
-    "$target/.config/nvim" "$target/.ssh"
+mkdir -p "$target/.config/jj" "$target/.config/git" "$target/.config/tmux" "$target/.config/nvim" "$target/.ssh"
 if [ "$kernel_name" = Darwin ]; then
     mkdir -p "$target/.config/kitty"
 fi
