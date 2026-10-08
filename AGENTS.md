@@ -81,7 +81,7 @@ Separate merging from releasing. Features that are not yet available can be inte
 
 ### Working Copy & Changes
 
-- Inspect `jj status`, `jj diff`, and `jj log` before making changes.
+- Inspect `jj status` and `jj log` before making changes.
 - For a new, independent task, fetch the latest mainline with `jj git fetch --remote origin`, then start a change with `jj new main@origin`. When continuing existing work, keep the current change and base.
 - Use `jj describe -m '<description>'` to describe the current change. Format: `<subsystem>: <imperative description>`. Explain rationale or tradeoffs in the body when they are not obvious.
 - Use `jj new` often to start the next change, keeping each commit independent and single-purpose for easier review and rollback.
