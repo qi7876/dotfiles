@@ -34,14 +34,14 @@ Installation and removal always operate on the complete configuration set:
 
 Package arguments are intentionally unsupported. On macOS the scripts deploy
 `shell-macos` and Kitty; on Linux they deploy `shell-linux` without Kitty.
-Other kernels are rejected before the script creates links or local files.
+The management scripts require Zsh.
 
 The installer creates real directories and links each managed file separately.
 Repository tool directories contain only their configuration files; the link
-destinations are defined in `scripts/managed-links.sh`.
+destinations are defined in `scripts/install.sh` and `scripts/uninstall.sh`.
 Installation reports all path conflicts before creating files or links and
 does not overwrite existing files. Use
-`DOTFILES_TARGET=/temporary/home` to operate on a different home directory.
+`HOME=/temporary/home` to operate on a different home directory.
 Existing directory links and former Git or tmux home-directory links are not
 migrated; remove them manually before using the new layout.
 
@@ -79,7 +79,7 @@ there when needed; it starts empty and stores them as plain text.
 Git, tmux, and Neovim are linked to `~/.config/git/config`,
 `~/.config/tmux/tmux.conf`, and `~/.config/nvim/init.lua`. Kitty files are
 linked individually inside `~/.config/kitty` on macOS. The root
-`AGENTS.md` is linked into each existing `~/.codex`, `~/.dsh`, and `~/.claude`
+`AGENTS.md` is linked into each existing `~/.codex` and `~/.dsh`
 directory; the installer does not create those directories.
 
 Private SSH hosts belong in `~/.ssh/config.local`. SSH keys, `known_hosts`,
