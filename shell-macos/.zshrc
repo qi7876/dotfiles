@@ -15,6 +15,7 @@ setopt INC_APPEND_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 
+fpath+=~/.zfunc
 autoload -Uz compinit
 compinit
 
