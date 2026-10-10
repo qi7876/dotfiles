@@ -5,13 +5,12 @@ repo_dir=${0:A:h:h}
 kernel_name=$(uname -s)
 
 links=(
-    "$repo_dir/jj/config.toml" "$HOME/.config/jj/config.toml"
     "$repo_dir/git/config" "$HOME/.config/git/config"
     "$repo_dir/tmux/tmux.conf" "$HOME/.config/tmux/tmux.conf"
     "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua"
     "$repo_dir/ssh/config" "$HOME/.ssh/config"
 )
-config_dirs=("$HOME"/.config{,/jj,/git,/tmux,/nvim} "$HOME/.zfunc" "$HOME/.ssh")
+config_dirs=("$HOME"/.config{,/git,/tmux,/nvim} "$HOME/.zfunc" "$HOME/.ssh")
 local_files=("$HOME/.config/git/credentials" "$HOME/.secrets.zsh" "$HOME/.ssh/config.local")
 
 case $kernel_name in

@@ -5,7 +5,6 @@ repo_dir=${0:A:h:h}
 kernel_name=$(uname -s)
 
 links=(
-    "$repo_dir/jj/config.toml" "$HOME/.config/jj/config.toml"
     "$repo_dir/git/config" "$HOME/.config/git/config"
     "$repo_dir/tmux/tmux.conf" "$HOME/.config/tmux/tmux.conf"
     "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua"
