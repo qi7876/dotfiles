@@ -25,7 +25,7 @@
 
 [alias]
     st = status --short --branch
-    lg = log --graph --decorate --oneline --all
+    lg = log --graph --decorate --oneline --max-count 20
 
 [http]
     proxy = http://127.0.0.1:7890
