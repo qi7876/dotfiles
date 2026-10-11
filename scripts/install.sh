@@ -8,6 +8,7 @@ links=(
     "$repo_dir/git/config" "$HOME/.config/git/config"
     "$repo_dir/tmux/tmux.conf" "$HOME/.config/tmux/tmux.conf"
     "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua"
+    "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml"
     "$repo_dir/ssh/config" "$HOME/.ssh/config"
 )
 config_dirs=("$HOME"/.config{,/git,/tmux,/nvim} "$HOME/.zfunc" "$HOME/.ssh")

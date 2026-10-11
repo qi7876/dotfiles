@@ -1,6 +1,3 @@
-PROMPT='%F{4}%n@%m %F{5}%~%f
-%F{2}%(!.#.$)%f '
-
 export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 
 alias l='ls -ChF'
@@ -23,6 +20,7 @@ bindkey -e
 eval "$(mise activate zsh)"
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"
+eval "$(starship init zsh)"
 
 copy() {
     setopt local_options pipe_fail
