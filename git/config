@@ -26,6 +26,8 @@
 [alias]
     st = status --short --branch
     lg = log --graph --decorate --oneline --all --max-count 20
+    d = diff --color-moved --color-moved-ws=allow-indentation-change
+    ds = diff --stat --compact-summary
 
 [http]
     proxy = http://127.0.0.1:7890
