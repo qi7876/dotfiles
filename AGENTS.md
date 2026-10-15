@@ -12,9 +12,7 @@
 
 Record only rationale, constraints, tradeoffs, operational knowledge, and important historical decisions that code cannot readily express.
 
-- `README.md`
-    - Project management: the project goal, current milestone, and acceptance criteria.
-    - Software: introduction, installation, usage, development workflow, current status, and important limitations.
+- `README.md`: the project goal, introduction, installation, usage, development workflow, current status, and important limitations.
 - `docs/`: design and operational documentation that needs a separate explanation.
 - `docs/architecture/`: architecture documentation.
 
