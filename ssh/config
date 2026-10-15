@@ -1,6 +1,0 @@
-Include ~/.ssh/config.local
-
-Host *
-    ServerAliveInterval 5
-    ServerAliveCountMax 2
-    ConnectTimeout 5
