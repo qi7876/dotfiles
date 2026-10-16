@@ -52,7 +52,7 @@ symbol = "cobol "
 symbol = "conda "
 
 [container]
-symbol = "container "
+symbol = "cont "
 
 [crystal]
 symbol = "cr "
@@ -102,7 +102,7 @@ truncation_symbol = "..."
 symbol = "gcp "
 
 [git_branch]
-symbol = "git "
+symbol = ""
 truncation_symbol = "..."
 
 [gleam]
@@ -146,7 +146,7 @@ symbol = "jl "
 symbol = "kt "
 
 [kubernetes]
-symbol = "kubernetes "
+symbol = "k8s "
 
 [lua]
 symbol = "lua "
