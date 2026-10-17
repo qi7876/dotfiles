@@ -4,7 +4,7 @@ add_newline = false
 
 format = '''
 $username$hostname$directory$git_branch$git_status
-$container$character'''
+${env_var.ZMX_SESSION}$container$character'''
 
 [username]
 show_always = true
@@ -23,3 +23,7 @@ format = 'on [$branch]($style) '
 
 [container]
 format = '[$name]($style) '
+
+[env_var.ZMX_SESSION]
+format = "[$env_value]($style) "
+style = "dimmed bold purple"
