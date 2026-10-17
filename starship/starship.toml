@@ -8,12 +8,18 @@ $container$character'''
 
 [username]
 show_always = true
+format = '[$user]($style) '
 
 [hostname]
 ssh_only = false
+format = 'at [$hostname]($style) '
+
+[directory]
+format = 'in [$path]($style)[$read_only]($read_only_style) '
+read_only = ' ro'
 
 [git_branch]
-symbol = ''
+format = 'on [$branch]($style) '
 
 [container]
-format = '[$symbol $name]($style) '
+format = '[$name]($style) '
