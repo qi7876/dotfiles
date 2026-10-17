@@ -16,7 +16,7 @@ case $kernel_name in
         for config_file in .z{shrc,profile,shenv}; do
             links+=("$repo_dir/shell-macos/$config_file" "$HOME/$config_file")
         done
-        for config_file in kitty.conf ssh.conf current-theme.conf; do
+        for config_file in kitty.conf ssh.conf; do
             links+=("$repo_dir/kitty/$config_file" "$HOME/.config/kitty/$config_file")
         done
         ;;
