@@ -6,11 +6,10 @@ kernel_name=$(uname -s)
 
 links=(
     "$repo_dir/git/config" "$HOME/.config/git/config"
-    "$repo_dir/tmux/tmux.conf" "$HOME/.config/tmux/tmux.conf"
     "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua"
     "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml"
 )
-config_dirs=("$HOME"/.config{,/git,/tmux,/nvim} "$HOME/.zfunc")
+config_dirs=("$HOME"/.config{,/git,/nvim} "$HOME/.zfunc")
 local_files=("$HOME/.config/git/credentials" "$HOME/.secrets.zsh")
 
 case $kernel_name in
