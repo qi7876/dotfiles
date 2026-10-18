@@ -7,23 +7,40 @@ $username$hostname$directory$git_branch$git_status
 ${env_var.ZMX_SESSION}$container$character'''
 
 [username]
+style_user = "yellow"
+style_root = "red"
 show_always = true
 format = '[$user]($style) '
 
 [hostname]
+style = "green"
 ssh_only = false
 format = 'at [$hostname]($style) '
 
 [directory]
+style = "cyan"
 format = 'in [$path]($style)[$read_only]($read_only_style) '
 read_only = ' ro'
 
 [git_branch]
+style = "purple"
 format = 'on [$branch]($style) '
 
+[git_status]
+style = "red"
+
 [container]
+style = "red"
 format = '[$name]($style) '
 
 [env_var.ZMX_SESSION]
 format = "[$env_value]($style) "
-style = "dimmed bold purple"
+style = "purple"
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+vimcmd_visual_symbol = "[❮](yellow)"
+vimcmd_replace_symbol = "[❮](purple)"
+vimcmd_replace_one_symbol = "[❮](purple)"
