@@ -24,10 +24,16 @@ read_only = ' ro'
 
 [git_branch]
 style = "purple"
+truncation_symbol = "..."
 format = 'on [$branch]($style) '
 
 [git_status]
 style = "red"
+ahead = ">"
+behind = "<"
+diverged = "<>"
+deleted = "x"
+renamed = "->"
 
 [container]
 style = "red"
@@ -38,9 +44,9 @@ format = "[$env_value]($style) "
 style = "purple"
 
 [character]
-success_symbol = "[❯](green)"
-error_symbol = "[❯](red)"
-vimcmd_symbol = "[❮](green)"
-vimcmd_visual_symbol = "[❮](yellow)"
-vimcmd_replace_symbol = "[❮](purple)"
-vimcmd_replace_one_symbol = "[❮](purple)"
+success_symbol = "[>](green)"
+error_symbol = "[>](red)"
+vimcmd_symbol = "[<](green)"
+vimcmd_visual_symbol = "[<](yellow)"
+vimcmd_replace_symbol = "[<](purple)"
+vimcmd_replace_one_symbol = "[<](purple)"
