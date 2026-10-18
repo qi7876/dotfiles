@@ -17,15 +17,13 @@ for source in "$repo_dir"/fish/functions/*.fish
 end
 
 if test "$kernel_name" = Darwin
-    for config_file in kitty.conf ssh.conf
-        set -a links "$repo_dir/kitty/$config_file" "$HOME/.config/kitty/$config_file"
-    end
+    set -a links "$repo_dir/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
 end
 
 set -l config_dirs "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
     "$HOME/.config/fish" "$HOME/.config/fish/functions"
 if test "$kernel_name" = Darwin
-    set -a config_dirs "$HOME/.config/kitty"
+    set -a config_dirs "$HOME/.config/ghostty"
 end
 set -l local_files "$HOME/.config/git/credentials" "$HOME/.config/fish/secrets.fish"
 

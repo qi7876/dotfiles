@@ -1,0 +1,14 @@
+env = LANG=en_US.UTF-8
+auto-update-channel = tip
+
+theme = Catppuccin Latte
+font-family = Source Code Pro
+font-size = 14
+font-feature = -calt,-liga,-dlig
+
+window-width = 120
+window-height = 41
+macos-titlebar-style = tabs
+macos-option-as-alt = true
+clipboard-read = allow
+clipboard-write = allow

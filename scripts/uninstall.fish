@@ -17,9 +17,7 @@ for source in "$repo_dir"/fish/functions/*.fish
 end
 
 if test "$kernel_name" = Darwin
-    for config_file in kitty.conf ssh.conf
-        set -a links "$repo_dir/kitty/$config_file" "$HOME/.config/kitty/$config_file"
-    end
+    set -a links "$repo_dir/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
 end
 
 for agent_dir in "$HOME/.codex" "$HOME/.dsh"

@@ -8,7 +8,9 @@ with individual symbolic links.
 Git, fish, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
 macOS also requires Homebrew; Linux requires mise.
 
-Kitty configuration is deployed only on macOS.
+Ghostty configuration is deployed only on macOS.
+The `s` alias uses `ghostty +ssh --`, so Ghostty must be available on `PATH`
+and its build must support the `+ssh` action.
 
 ## Install
 
@@ -20,7 +22,7 @@ Installation and removal always operate on the complete configuration set:
 ```
 
 Both platforms use the shared `fish/` configuration and native fish functions.
-Kitty is deployed only on macOS. The management scripts require fish.
+Ghostty is deployed only on macOS. The management scripts require fish.
 Fish uses its native history and completion support.
 
 The installer creates real directories and links each managed file separately.
