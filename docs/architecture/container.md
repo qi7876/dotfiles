@@ -4,8 +4,8 @@
 C4Container
     title dotfiles containers
     Person(owner, "Owner")
-    Container(repo, "Configuration files", "Files", "Shared configuration plus macOS and Linux shell files")
-    Container(scripts, "Management scripts", "Zsh", "Selects platform files and manages the complete link set")
+    Container(repo, "Configuration files", "Files", "Shared configuration and native fish functions")
+    Container(scripts, "Management scripts", "fish", "Manages the complete link set and macOS-only Kitty files")
     ContainerDb(home, "Home directory", "Filesystem", "Linked configuration and private local files")
 
     Rel(owner, scripts, "Runs")
@@ -14,8 +14,11 @@ C4Container
     Rel(scripts, home, "Creates missing private files once")
 ```
 
-The scripts select `shell-macos` or `shell-linux` and preflight every managed
-file link. Kitty is macOS-only. The shell configuration files do not detect the
-platform. The installer links Git, tmux, and Neovim files below `~/.config` and links
-`AGENTS.md` into existing tool directories. `~/.secrets.zsh`,
-`~/.config/git/credentials`, and `config.local` remain ordinary local files.
+The scripts preflight every managed file link and deploy the shared `fish/`
+configuration. Fish detects the platform for macOS Homebrew paths and Linux mise
+initialization; interactive integrations only load in interactive shells.
+Kitty is macOS-only. The installer links Git, fish, Starship, and Neovim files
+below `~/.config` and links `AGENTS.md` into existing tool directories.
+`~/.config/fish/secrets.fish`, `~/.config/git/credentials`, and `config.local`
+remain ordinary local files. Secrets load after the default shell environment
+and can override it. Uninstall preserves private files.
