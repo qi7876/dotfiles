@@ -24,6 +24,7 @@ Installation and removal always operate on the complete configuration set:
 Both platforms use the shared `fish/` configuration and native fish functions.
 Ghostty is deployed only on macOS. The management scripts require fish.
 Fish uses its native history and completion support.
+PATH additions are process-local and skip directories that do not exist.
 
 The installer creates real directories and links each managed file separately.
 Installation reports all path conflicts before creating files or links and
