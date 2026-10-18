@@ -3,7 +3,8 @@ export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.c
 alias l='ls -ChF'
 alias ll='ls -AlhF'
 alias g='git'
-alias ks='kitten ssh'
+alias n='nvim'
+alias s='kitten ssh'
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=20000
