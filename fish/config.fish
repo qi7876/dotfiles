@@ -36,7 +36,7 @@ if status is-interactive
     alias ll 'ls -AlhF'
     alias g git
     alias n nvim
-    alias s 'kitten ssh'
+    alias s 'ghostty +ssh --'
 
     fish_default_key_bindings
     if test (uname -s) = Linux
