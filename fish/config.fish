@@ -1,16 +1,11 @@
+set -l kernel_name (uname -s)
 set -l shell_paths "$HOME/.local/bin" "$HOME/.cargo/bin"
-switch (uname -s)
-    case Darwin
-        /opt/homebrew/bin/brew shellenv fish | source
-        or return $status
-        set -a shell_paths /opt/homebrew/opt/node@24/bin /opt/homebrew/opt/rustup/bin
+if test "$kernel_name" = Darwin
+    /opt/homebrew/bin/brew shellenv fish | source
+    or return $status
+    set -a shell_paths /opt/homebrew/opt/node@24/bin /opt/homebrew/opt/rustup/bin
 end
-for entry in $PATH
-    if not contains -- "$entry" $shell_paths
-        set -a shell_paths "$entry"
-    end
-end
-set -gx PATH $shell_paths
+fish_add_path --path --move $shell_paths
 
 set -gx VISUAL nvim
 set -gx EDITOR nvim
@@ -29,20 +24,20 @@ if test -f "$__fish_config_dir/secrets.fish"
     or return $status
 end
 
-if status is-interactive
-    set -gx FZF_DEFAULT_OPTS '--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
+status is-interactive; or return 0
 
-    alias l 'ls -ChF'
-    alias ll 'ls -AlhF'
-    alias g git
-    alias n nvim
-    alias s 'ghostty +ssh --'
+set -gx FZF_DEFAULT_OPTS '--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 
-    fish_default_key_bindings
-    if test (uname -s) = Linux
-        mise activate fish | source
-    end
-    fzf --fish | source
-    zoxide init fish | source
-    starship init fish | source
+alias l 'ls -ChF'
+alias ll 'ls -AlhF'
+alias g git
+alias n nvim
+alias s 'ghostty +ssh --'
+
+fish_default_key_bindings
+if test "$kernel_name" = Linux
+    mise activate fish | source
 end
+fzf --fish | source
+zoxide init fish | source
+starship init fish | source
