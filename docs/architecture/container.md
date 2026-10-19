@@ -5,7 +5,7 @@ C4Container
     title dotfiles containers
     Person(owner, "Owner")
     Container(repo, "Configuration files", "Files", "Shared configuration and native fish functions")
-    Container(scripts, "Management scripts", "fish", "Manages the complete link set and macOS-only Ghostty files")
+    Container(scripts, "Management scripts", "POSIX sh", "Manages the complete link set and macOS-only Ghostty files")
     ContainerDb(home, "Home directory", "Filesystem", "Linked configuration and private local files")
 
     Rel(owner, scripts, "Runs")
