@@ -17,12 +17,13 @@ and its build must support the `+ssh` action.
 Installation and removal always operate on the complete configuration set:
 
 ```sh
-./scripts/install.fish
-./scripts/uninstall.fish
+./scripts/install.sh
+./scripts/uninstall.sh
 ```
 
 Both platforms use the shared `fish/` configuration and native fish functions.
-Ghostty is deployed only on macOS. The management scripts require fish.
+Ghostty is deployed only on macOS. The management scripts use POSIX sh and do not
+require fish to run.
 Fish uses its native history and completion support.
 PATH additions are process-local and skip directories that do not exist.
 
