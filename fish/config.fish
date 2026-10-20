@@ -34,7 +34,7 @@ alias g git
 alias n nvim
 alias s 'ghostty +ssh --'
 
-fish_vi_key_bindings
+fish_default_key_bindings
 if test "$kernel_name" = Linux
     mise activate fish | source
 end
