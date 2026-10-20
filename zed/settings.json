@@ -7,12 +7,12 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "vim_mode": false,
   "telemetry": {
     "diagnostics": false,
     "metrics": false,
     "anthropic_retention": false
   },
-  "vim_mode": true,
   "icon_theme": "Catppuccin Latte",
   "git_panel": {
     "default_width": 300.0,
@@ -40,6 +40,80 @@
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte - No Italics",
-    "dark": "Catppuccin Frappé - No Italics",
+    "dark": "Catppuccin Frappé - No Italics"
   },
+  "languages": {
+    "Markdown": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "JSON": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "JSONC": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "YAML": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "TOML": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "Shell Script": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "BibTeX": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "LaTeX": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    },
+    "CMake": {
+      "formatter": {
+        "external": {
+          "command": "dprint",
+          "arguments": ["fmt", "--stdin", "{buffer_path}"]
+        }
+      }
+    }
+  }
 }

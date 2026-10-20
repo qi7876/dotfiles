@@ -21,12 +21,10 @@
     "**/.bash_profile",
     "**/.profile",
     "**/.zshrc",
-    "**/.zshenv"
+    "**/.zshenv",
   ],
 
-  "excludes": [
-    "**/*-lock.json"
-  ],
+  "excludes": ["**/*-lock.json"],
 
   "shebangs": {
     "#!/bin/sh": "sh",
@@ -34,7 +32,7 @@
     "#!/usr/bin/bash": "sh",
     "#!/usr/bin/env sh": "sh",
     "#!/usr/bin/env bash": "sh",
-    "#!/usr/bin/env zsh": "zsh"
+    "#!/usr/bin/env zsh": "zsh",
   },
 
   "plugins": [
@@ -42,6 +40,6 @@
     "npm:@kachick/dprint-plugin-sh@0.1.2",
     "https://plugins.dprint.dev/apcamargo/bibtex-tidy-0.2.1.wasm",
     "https://plugins.dprint.dev/cmakefmt/cmakefmt-v2.2.0.wasm",
-    "https://plugins.dprint.dev/jolars/badness-v1.2.2.wasm"
-  ]
+    "https://plugins.dprint.dev/jolars/badness-v1.2.2.wasm",
+  ],
 }
