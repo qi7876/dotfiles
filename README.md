@@ -31,6 +31,11 @@ The installer creates real directories and links each managed file separately.
 Installation reports all path conflicts before creating files or links and
 does not overwrite existing files.
 
+Zed settings and the global dprint configuration are linked from
+`zed/settings.json` and `dprint/dprint.jsonc` to `~/.config/zed/settings.json`
+and `~/.config/dprint/dprint.jsonc`. Move any existing files aside before
+installing. Zed's local prompt database and other runtime data remain unmanaged.
+
 ## Local configuration
 
 The installer creates these files empty when missing, sets mode `600`, and

@@ -7,6 +7,8 @@ kernel_name=$(uname -s)
 set -- \
     "$repo_dir/git/config" "$HOME/.config/git/config" \
     "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
+    "$repo_dir/zed/settings.json" "$HOME/.config/zed/settings.json" \
+    "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
     "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
     "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish"
 for source in "$repo_dir"/fish/functions/*.fish; do
@@ -48,6 +50,7 @@ check_directory() {
 
 conflict_count=0
 for config_dir in "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
+    "$HOME/.config/zed" "$HOME/.config/dprint" \
     "$HOME/.config/fish" "$HOME/.config/fish/functions"; do
     check_directory "$config_dir"
 done
@@ -88,6 +91,7 @@ fi
 
 umask 077
 mkdir -p "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
+    "$HOME/.config/zed" "$HOME/.config/dprint" \
     "$HOME/.config/fish" "$HOME/.config/fish/functions"
 if test "$kernel_name" = Darwin; then
     mkdir -p "$HOME/.config/ghostty"
