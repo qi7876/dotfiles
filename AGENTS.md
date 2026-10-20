@@ -22,10 +22,10 @@ When code or behavior changes, update relevant documentation as needed.
 
 Usually maintain C1 and C2 over the long term; for simple projects, retain only views that help explain the system.
 
-1. C1 — System Context: users, system responsibilities, and external systems.
-1. C2 — Container: major runtime units, responsibilities, communication methods, protocols, and key technologies.
-1. C3 — Component: only for containers that are complex, important, and difficult to understand from code.
-1. C4 — Code: use code; do not maintain separate diagrams over the long term.
+-  C1 — System Context: users, system responsibilities, and external systems.
+-  C2 — Container: major runtime units, responsibilities, communication methods, protocols, and key technologies.
+-  C3 — Component: only for containers that are complex, important, and difficult to understand from code.
+-  C4 — Code: use code; do not maintain separate diagrams over the long term.
 
 Add views of runtime interactions, deployment, relationships between systems, state machines, data relationships, control flow, or data flow as needed.
 

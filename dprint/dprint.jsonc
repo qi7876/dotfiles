@@ -1,0 +1,45 @@
+{
+  "newLineKind": "lf",
+  "useTabs": false,
+
+  "oxc": {},
+  "sh": {},
+  "bibtex-tidy": {},
+  "cmakefmt": {},
+  "badness": {},
+
+  "includes": [
+    "**/*.{json,jsonc,json5,yaml,yml,toml}",
+    "**/*.{sh,bash,zsh,ksh,mksh,dash,bats}",
+    "**/*.{bib,bibtex}",
+    "**/*.{tex,sty,cls,dtx,ins}",
+    "**/*.cmake",
+    "**/CMakeLists.txt",
+    "**/CMakeLists.txt.in",
+    "**/.envrc",
+    "**/.bashrc",
+    "**/.bash_profile",
+    "**/.profile",
+    "**/.zshrc",
+    "**/.zshenv",
+  ],
+
+  "excludes": ["**/*-lock.json"],
+
+  "shebangs": {
+    "#!/bin/sh": "sh",
+    "#!/bin/bash": "sh",
+    "#!/usr/bin/bash": "sh",
+    "#!/usr/bin/env sh": "sh",
+    "#!/usr/bin/env bash": "sh",
+    "#!/usr/bin/env zsh": "zsh",
+  },
+
+  "plugins": [
+    "npm:@dprint/oxc@0.46.0",
+    "npm:@kachick/dprint-plugin-sh@0.1.2",
+    "https://plugins.dprint.dev/apcamargo/bibtex-tidy-0.2.1.wasm",
+    "https://plugins.dprint.dev/cmakefmt/cmakefmt-v2.2.0.wasm",
+    "https://plugins.dprint.dev/jolars/badness-v1.2.2.wasm",
+  ],
+}
