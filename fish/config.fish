@@ -33,7 +33,7 @@ alias l 'ls -ChF'
 alias ll 'ls -AlhF'
 alias g git
 alias n nvim
-alias s 'ghostty +ssh --'
+alias s ssh
 
 fish_default_key_bindings
 if test "$kernel_name" = Linux
