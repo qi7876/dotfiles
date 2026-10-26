@@ -14,10 +14,6 @@ for source in "$repo_dir"/fish/functions/*.fish; do
         set -- "$@" "$source" "$HOME/.config/fish/functions/${source##*/}"
 done
 
-if test "$kernel_name" = Darwin; then
-        set -- "$@" "$repo_dir/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
-fi
-
 for agent_dir in "$HOME/.codex" "$HOME/.dsh"; do
         set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"
 done

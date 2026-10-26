@@ -14,10 +14,6 @@ for source in "$repo_dir"/fish/functions/*.fish; do
         set -- "$@" "$source" "$HOME/.config/fish/functions/${source##*/}"
 done
 
-if test "$kernel_name" = Darwin; then
-        set -- "$@" "$repo_dir/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
-fi
-
 existing_kind() {
         if test -L "$1"; then
                 if test -d "$1"; then
@@ -52,9 +48,6 @@ for config_dir in "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
         "$HOME/.config/dprint" "$HOME/.config/fish" "$HOME/.config/fish/functions"; do
         check_directory "$config_dir"
 done
-if test "$kernel_name" = Darwin; then
-        check_directory "$HOME/.config/ghostty"
-fi
 for local_file in "$HOME/.config/git/credentials" "$HOME/.config/fish/secrets.fish"; do
         if test -L "$local_file" || { test -e "$local_file" && ! test -f "$local_file"; }; then
                 report_conflict "$local_file" 'expected a regular local file'
@@ -90,9 +83,6 @@ fi
 umask 077
 mkdir -p "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
         "$HOME/.config/dprint" "$HOME/.config/fish" "$HOME/.config/fish/functions"
-if test "$kernel_name" = Darwin; then
-        mkdir -p "$HOME/.config/ghostty"
-fi
 for local_file in "$HOME/.config/git/credentials" "$HOME/.config/fish/secrets.fish"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"
