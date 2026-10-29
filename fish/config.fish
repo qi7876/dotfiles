@@ -5,7 +5,7 @@ set -l shell_paths \
 if test "$kernel_name" = Darwin
     /opt/homebrew/bin/brew shellenv fish | source
     set -a shell_paths \
-        /opt/homebrew/opt/node@24/bin \
+        /opt/homebrew/opt/node@26/bin \
         /opt/homebrew/opt/rustup/bin
 end
 fish_add_path --path --move $shell_paths
