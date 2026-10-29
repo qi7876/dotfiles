@@ -13,8 +13,6 @@ fish_add_path --path --move $shell_paths
 set -gx VISUAL nvim
 set -gx EDITOR nvim
 set -gx SUDO_EDITOR nvim
-set -gx LANG en_US.UTF-8
-set -gx LC_ALL en_US.UTF-8
 set -gx UV_DEFAULT_INDEX https://mirrors.aliyun.com/pypi/simple/
 set -gx http_proxy http://127.0.0.1:7890
 set -gx https_proxy "$http_proxy"
