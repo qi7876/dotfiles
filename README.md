@@ -42,6 +42,13 @@ never overwrites or removes their contents:
 `secrets.fish` uses fish syntax and loads after the default environment settings,
 so it can override them (for example, `set -gx MIHOMO_SECRET value`).
 
+## Mihomo
+
+Use `mh-set-mode global`, `mh-set-mode direct`, or `mh-set-mode rule` to switch
+the running Mihomo instance's routing mode. These functions use `MIHOMO_API`
+(default `http://127.0.0.1:9090`) and the optional `MIHOMO_SECRET`.
+Mode changes use the [Mihomo configuration API](https://wiki.metacubex.one/api/).
+
 ## Development
 
 The maintained architecture views are the
