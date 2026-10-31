@@ -10,6 +10,7 @@ if test "$kernel_name" = Darwin
 end
 fish_add_path --path --move $shell_paths
 
+set -gx COLORTERM truecolor
 set -gx VISUAL nvim
 set -gx EDITOR nvim
 set -gx SUDO_EDITOR nvim
