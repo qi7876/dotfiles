@@ -33,6 +33,7 @@ alias ll 'ls -AlhF'
 alias g git
 alias n nvim
 alias s ssh
+alias nv 'nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader'
 
 fish_default_key_bindings
 if test "$kernel_name" = Linux
