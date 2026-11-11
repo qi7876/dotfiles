@@ -1,8 +1,3 @@
-if ((BASH_VERSINFO[0] < 5)); then
-        printf 'This configuration requires Bash 5 or newer.\n' >&2
-        return 1
-fi
-
 shell_kernel=$(uname -s)
 shell_paths=("$HOME/.local/bin" "$HOME/.cargo/bin")
 if [[ $shell_kernel == Darwin ]]; then
@@ -40,9 +35,7 @@ export HTTPS_PROXY="$https_proxy"
 export no_proxy=localhost,127.0.0.1,::1
 export NO_PROXY="$no_proxy"
 export MIHOMO_API=http://127.0.0.1:9090
-if [[ -f "$HOME/.bash_secrets" ]]; then
-        source "$HOME/.bash_secrets"
-fi
+source "$HOME/.bash_secrets"
 
 _mhcurl() {
         if [[ -z "${MIHOMO_API:-}" ]]; then
@@ -164,7 +157,7 @@ bind 'set editing-mode emacs'
 
 export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 
-alias l='ls -ChF'
+alias ls='ls --color=auto -ChF'
 alias ll='ls -AlhF'
 alias g=git
 alias n=nvim
