@@ -4,8 +4,8 @@
 C4Container
     title dotfiles containers
     Person(owner, "Owner")
-    Container(repo, "Configuration files", "Files", "Shared configuration and Bash functions")
-    Container(scripts, "Management scripts", "POSIX sh", "Manages the complete link set and macOS-only Ghostty files")
+    Container(repo, "Configuration files", "Files", "Bash environment and Fish interactive configuration")
+    Container(scripts, "Management scripts", "POSIX sh", "Manages the complete configuration link set")
     ContainerDb(home, "Home directory", "Filesystem", "Linked configuration and private local files")
 
     Rel(owner, scripts, "Runs")
@@ -14,12 +14,16 @@ C4Container
     Rel(scripts, home, "Creates missing private files once")
 ```
 
-The scripts preflight every managed file link and deploy the shared `bash/`
-configuration. Bash detects the platform for macOS Homebrew paths and Linux mise
-initialization; interactive integrations only load in interactive shells.
-Ghostty is macOS-only. The installer links Git, Bash, Starship, Neovim, and dprint files
-using `~/.gitconfig`, `~/.bashrc`, `~/.bash_profile`, and files below `~/.config`. It also links
-`AGENTS.md` into existing tool directories.
-`~/.bash_secrets`, `~/.git-credentials`, and `config.local`
-remain ordinary local files. Secrets load after the default shell environment
-and can override it. Uninstall preserves private files.
+The scripts preflight every managed file link and deploy the shared `bash/` and
+`fish/` configurations. The Bash login profile initializes the environment and
+loads `~/.secrets`; interactive Bash replaces itself with Fish. Non-interactive
+login shells initialize the environment without launching Fish. Fish inherits
+exported variables and loads interactive integrations. On Linux, Bash adds mise
+shims to PATH for non-interactive programs, while Fish activates mise hooks to
+update project tools and environment variables during interactive use.
+The installer links Git, Bash, Fish, Starship, Neovim, and dprint files using
+`~/.gitconfig`, `~/.bashrc`, `~/.bash_profile`, and files below `~/.config`.
+It also links `AGENTS.md` into existing tool directories.
+`~/.secrets` and `~/.git-credentials` remain ordinary local files. Secrets use
+Bash syntax, load after the default environment, and can override it. Uninstall
+preserves private files.

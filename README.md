@@ -5,8 +5,8 @@ with individual symbolic links.
 
 ## Prerequisites
 
-Git, Bash 5 or newer, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
-macOS also requires Homebrew and its Bash package (`brew install bash`); Linux requires mise.
+Git, Bash, Fish, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
+macOS also requires Homebrew; Linux requires mise.
 
 Ghostty configuration is deployed only on macOS.
 The `s` alias invokes `ssh`.
@@ -20,11 +20,15 @@ Installation and removal always operate on the complete configuration set:
 ./scripts/uninstall.sh
 ```
 
-Both platforms use the shared `bash/` configuration, with all shell functions
-defined in `.bashrc`.
-Ghostty is deployed only on macOS. The management scripts use POSIX sh and do not
-require Bash to run.
-Bash uses Readline completion and appends command history to `~/.bash_history`.
+Both platforms use Bash as the login shell for environment initialization and
+Fish for interactive use. `.bash_profile` initializes Homebrew, PATH, editor,
+proxy, and other exported variables, then loads `~/.secrets` using Bash syntax.
+Interactive Bash shells replace themselves with Fish through `.bashrc`.
+Fish inherits the environment and provides functions, aliases, completion,
+command history, fzf, zoxide, Starship, and Linux mise activation.
+On Linux, Bash adds mise shims for programs that inherit its PATH; Fish activation
+updates project tools and environment variables during interactive use.
+The management scripts use POSIX sh and do not require Bash to run.
 PATH additions are process-local and prepended directly without deduplication.
 
 The installer links Git configuration at `~/.gitconfig`, creates real directories,
@@ -32,19 +36,16 @@ and links each managed file separately.
 Installation reports all path conflicts before creating files or links and
 does not overwrite existing files.
 
-Login shells source `~/.bashrc` through `~/.bash_profile`; interactive non-login
-shells read `~/.bashrc` directly. Non-interactive shells only load this configuration
-when it is explicitly sourced or started as a login shell.
+Non-interactive login Bash shells initialize the environment without starting
+Fish. Non-login Bash shells inherit their parent's environment; non-interactive
+ones do not load these files automatically. Start terminals through the Bash
+login shell so Fish inherits the initialized environment. Running Fish directly
+does not load `~/.secrets` or the Bash environment defaults.
 
-When migrating from fish, remove the old managed links with the previous
-revision's `scripts/uninstall.sh` before installing this revision. Back up any
-existing `~/.bashrc` and `~/.bash_profile` that conflict with installation.
-Translate private settings from `~/.config/fish/secrets.fish` into
-`~/.bash_secrets`; fish syntax cannot be sourced by Bash.
-The installer does not change your login shell. After installation, use
-`chsh -s /opt/homebrew/bin/bash` on Apple Silicon macOS, or `chsh -s /bin/bash`
-on Linux. The chosen Bash 5+ executable must be listed in `/etc/shells`.
-Then open a new terminal.
+The installer does not change your account's login shell. Use
+`chsh -s /bin/bash` on macOS or Linux, or keep an existing Homebrew Bash login
+shell. The chosen executable must be listed in `/etc/shells`.
+Then open a new terminal. Use `bash --norc` for an interactive Bash session.
 
 ## Local configuration
 
@@ -52,9 +53,9 @@ The installer creates these files empty when missing, sets mode `600`, and
 never overwrites or removes their contents:
 
 - `~/.git-credentials`
-- `~/.bash_secrets`
+- `~/.secrets`
 
-`.bash_secrets` uses Bash syntax and loads after the default environment settings,
+`.secrets` uses Bash syntax and loads after the default environment settings,
 so it can override them (for example, `export MIHOMO_SECRET=value`).
 
 ## Mihomo
