@@ -1,28 +1,8 @@
-shell_kernel=$(uname -s)
-shell_paths=("$HOME/.local/bin" "$HOME/.cargo/bin")
-if [[ $shell_kernel == Darwin ]]; then
+if [[ $(uname -s) == Darwin ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv bash)"
-        shell_paths+=(/opt/homebrew/opt/node@26/bin /opt/homebrew/opt/rustup/bin)
+        export PATH="/opt/homebrew/opt/node@26/bin:/opt/homebrew/opt/rustup/bin:$PATH"
 fi
-
-# Move configured directories to the front and remove duplicate PATH entries.
-shell_path_list=()
-declare -A shell_seen_paths=()
-for shell_path in "${shell_paths[@]}"; do
-        [[ -d $shell_path ]] && shell_path_list+=("$shell_path")
-done
-mapfile -d : -t shell_paths < <(printf '%s:' "$PATH")
-shell_paths=("${shell_path_list[@]}" "${shell_paths[@]}")
-shell_path_list=()
-for shell_path in "${shell_paths[@]}"; do
-        # The suffix permits empty PATH entries (the current directory) as keys.
-        [[ -v 'shell_seen_paths[$shell_path/]' ]] && continue
-        shell_seen_paths["$shell_path/"]=1
-        shell_path_list+=("$shell_path")
-done
-printf -v PATH '%s:' "${shell_path_list[@]}"
-export PATH=${PATH%:}
-unset shell_paths shell_path_list shell_seen_paths shell_path
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 export VISUAL=nvim
 export EDITOR=nvim
@@ -143,10 +123,7 @@ mh-upgrade() {
         _mhcurl -X POST -H 'Content-Type: application/json' -d '{}' "$MIHOMO_API/upgrade"
 }
 
-if [[ $- != *i* ]]; then
-        unset shell_kernel
-        return 0
-fi
+[[ $- == *i* ]] || return 0
 
 # Append history so concurrent shells do not overwrite one another.
 HISTFILE="$HOME/.bash_history"
@@ -164,10 +141,9 @@ alias n=nvim
 alias s=ssh
 alias nv='nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader'
 
-if [[ $shell_kernel == Linux ]]; then
+if [[ $(uname -s) == Linux ]]; then
         eval "$(mise activate bash)"
 fi
-unset shell_kernel
 source <(fzf --bash)
 eval "$(zoxide init bash)"
 eval "$(starship init bash)"

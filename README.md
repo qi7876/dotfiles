@@ -25,7 +25,7 @@ defined in `.bashrc`.
 Ghostty is deployed only on macOS. The management scripts use POSIX sh and do not
 require Bash to run.
 Bash uses Readline completion and appends command history to `~/.bash_history`.
-PATH additions are process-local and skip directories that do not exist.
+PATH additions are process-local and prepended directly without deduplication.
 
 The installer links Git configuration at `~/.gitconfig`, creates real directories,
 and links each managed file separately.
