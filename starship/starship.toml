@@ -4,7 +4,7 @@ add_newline = false
 
 format = '''
 $username$hostname$directory$git_branch$git_status
-${env_var.ZMX_SESSION}$container$character'''
+${env_var.ZMX_SESSION}$container$shell$character'''
 
 [username]
 style_user = "yellow"
@@ -42,6 +42,13 @@ format = '[$name]($style) '
 [env_var.ZMX_SESSION]
 format = "[$env_value]($style) "
 style = "purple"
+
+[shell]
+disabled = false
+bash_indicator = "bash"
+fish_indicator = "fish"
+style = "cyan"
+format = '[$indicator]($style) '
 
 [character]
 success_symbol = "[>](green)"

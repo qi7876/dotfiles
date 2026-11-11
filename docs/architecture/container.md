@@ -4,7 +4,7 @@
 C4Container
     title dotfiles containers
     Person(owner, "Owner")
-    Container(repo, "Configuration files", "Files", "Bash environment and Fish interactive configuration")
+    Container(repo, "Configuration files", "Files", "Bash login environment and Bash/Fish interactive configuration")
     Container(scripts, "Management scripts", "POSIX sh", "Manages the complete configuration link set")
     ContainerDb(home, "Home directory", "Filesystem", "Linked configuration and private local files")
 
@@ -16,11 +16,12 @@ C4Container
 
 The scripts preflight every managed file link and deploy the shared `bash/` and
 `fish/` configurations. The Bash login profile initializes the environment and
-loads `~/.secrets`; interactive Bash replaces itself with Fish. Non-interactive
-login shells initialize the environment without launching Fish. Fish inherits
-exported variables and loads interactive integrations. On Linux, Bash adds mise
-shims to PATH for non-interactive programs, while Fish activates mise hooks to
-update project tools and environment variables during interactive use.
+loads `~/.secrets`; interactive Bash also loads `.bashrc` for aliases,
+history, fzf, zoxide, and Starship. Fish starts only when explicitly invoked and
+inherits the exported environment and provides clipboard and Mihomo functions.
+Starship identifies the current shell in the prompt. Non-interactive login shells initialize only
+the environment. On Linux, Bash adds mise shims to PATH for non-interactive
+programs, and both Bash and Fish activate mise hooks during interactive use.
 The installer links Git, Bash, Fish, Starship, Neovim, and dprint files using
 `~/.gitconfig`, `~/.bashrc`, `~/.bash_profile`, and files below `~/.config`.
 It also links `AGENTS.md` into existing tool directories.
