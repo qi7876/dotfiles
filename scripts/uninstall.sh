@@ -11,9 +11,6 @@ set -- \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
         "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
         "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
-for source in "$repo_dir"/bash/functions/*.bash; do
-        set -- "$@" "$source" "$HOME/.config/bash/functions/${source##*/}"
-done
 
 for agent_dir in "$HOME/.codex" "$HOME/.dsh" "$HOME/.claude"; do
         set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"

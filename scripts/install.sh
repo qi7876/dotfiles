@@ -11,9 +11,6 @@ set -- \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
         "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
         "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
-for source in "$repo_dir"/bash/functions/*.bash; do
-        set -- "$@" "$source" "$HOME/.config/bash/functions/${source##*/}"
-done
 
 existing_kind() {
         if test -L "$1"; then
@@ -46,7 +43,7 @@ check_directory() {
 
 conflict_count=0
 for config_dir in "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/bash" "$HOME/.config/bash/functions"; do
+        "$HOME/.config/dprint" "$HOME/.config/bash"; do
         check_directory "$config_dir"
 done
 for local_file in "$HOME/.config/git/credentials" "$HOME/.config/bash/secrets.bash"; do
@@ -83,7 +80,7 @@ fi
 
 umask 077
 mkdir -p "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/bash" "$HOME/.config/bash/functions"
+        "$HOME/.config/dprint" "$HOME/.config/bash"
 for local_file in "$HOME/.config/git/credentials" "$HOME/.config/bash/secrets.bash"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"

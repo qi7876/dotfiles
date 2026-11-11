@@ -20,7 +20,8 @@ Installation and removal always operate on the complete configuration set:
 ./scripts/uninstall.sh
 ```
 
-Both platforms use the shared `bash/` configuration and Bash functions.
+Both platforms use the shared `bash/` configuration, with all shell functions
+defined in `.bashrc`.
 Ghostty is deployed only on macOS. The management scripts use POSIX sh and do not
 require Bash to run.
 Bash uses Readline completion and appends command history to `~/.bash_history`.
