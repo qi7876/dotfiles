@@ -1,0 +1,22 @@
+set nocompatible
+syntax enable
+filetype plugin indent on
+
+set number
+set scrolloff=8
+set mouse=a
+set clipboard=unnamedplus
+
+if has('patch-9.1.1984') && (exists('$SSH_TTY') || exists('$SSH_CONNECTION'))
+    packadd osc52
+    set clipmethod=osc52
+endif
+
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=-1
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch

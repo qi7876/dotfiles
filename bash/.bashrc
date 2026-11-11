@@ -4,9 +4,9 @@ if [[ $(uname -s) == Darwin ]]; then
 fi
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
-export VISUAL=nvim
-export EDITOR=nvim
-export SUDO_EDITOR=nvim
+export VISUAL=vim
+export EDITOR=vim
+export SUDO_EDITOR=vim
 export UV_DEFAULT_INDEX=https://mirrors.aliyun.com/pypi/simple/
 export http_proxy=http://127.0.0.1:7890
 export https_proxy="$http_proxy"
@@ -135,7 +135,7 @@ export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.c
 alias ls='ls --color=auto -ChF'
 alias ll='ls -AlhF'
 alias g=git
-alias n=nvim
+alias n=vim
 alias s=ssh
 alias nv='nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader'
 

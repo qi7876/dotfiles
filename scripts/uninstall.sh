@@ -6,7 +6,7 @@ kernel_name=$(uname -s)
 
 set -- \
         "$repo_dir/git/config" "$HOME/.gitconfig" \
-        "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
+        "$repo_dir/vim/vimrc" "$HOME/.vimrc" \
         "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
         "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \

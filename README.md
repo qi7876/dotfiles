@@ -5,7 +5,7 @@ with individual symbolic links.
 
 ## Prerequisites
 
-Git, Bash 5 or newer, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
+Git, Bash 5 or newer, fzf, zoxide, Starship, jq, Vim, and ripgrep.
 macOS also requires Homebrew and its Bash package (`brew install bash`); Linux requires mise.
 
 Ghostty configuration is deployed only on macOS.
@@ -56,6 +56,20 @@ never overwrites or removes their contents:
 
 `.bash_secrets` uses Bash syntax and loads after the default environment settings,
 so it can override them (for example, `export MIHOMO_SECRET=value`).
+
+## Vim
+
+The installer links `vim/vimrc` to `~/.vimrc`. Bash uses `vim` for the default
+editor and the `n` alias. Existing `~/.vimrc` files must be backed up before
+installation; the installer reports conflicts rather than overwriting them.
+When migrating, remove the old managed Neovim link using the previous revision's
+`scripts/uninstall.sh` before installing this revision.
+
+Vim uses the system clipboard when supported by its build. Over SSH, Vim
+9.1.1984 or newer uses its bundled
+[OSC 52 package](https://github.com/vim/vim/blob/master/runtime/pack/dist/opt/osc52/doc/osc52.txt).
+Older versions retain their normal clipboard behavior. The terminal must support
+OSC 52; use the terminal's paste shortcut if clipboard reads are unavailable.
 
 ## Mihomo
 

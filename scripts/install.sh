@@ -6,7 +6,7 @@ kernel_name=$(uname -s)
 
 set -- \
         "$repo_dir/git/config" "$HOME/.gitconfig" \
-        "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
+        "$repo_dir/vim/vimrc" "$HOME/.vimrc" \
         "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
         "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
@@ -42,7 +42,7 @@ check_directory() {
 }
 
 conflict_count=0
-for config_dir in "$HOME/.config" "$HOME/.config/nvim" \
+for config_dir in "$HOME/.config" \
         "$HOME/.config/dprint"; do
         check_directory "$config_dir"
 done
@@ -79,7 +79,7 @@ if test "$conflict_count" -gt 0; then
 fi
 
 umask 077
-mkdir -p "$HOME/.config" "$HOME/.config/nvim" \
+mkdir -p "$HOME/.config" \
         "$HOME/.config/dprint"
 for local_file in "$HOME/.git-credentials" "$HOME/.bash_secrets"; do
         if ! test -e "$local_file"; then
