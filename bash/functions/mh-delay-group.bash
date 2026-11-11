@@ -1,7 +1,7 @@
 # Keep pipeline failure handling local to this function.
 mh-delay-group() (
         set -o pipefail
-        if [ -z "${1:-}" ]; then
+        if [[ -z "${1:-}" ]]; then
                 printf 'usage: mh-delay-group <group>\n' >&2
                 return 1
         fi

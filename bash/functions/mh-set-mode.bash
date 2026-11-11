@@ -1,5 +1,5 @@
 mh-set-mode() {
-        if [ "$#" -ne 1 ]; then
+        if (($# != 1)); then
                 printf 'usage: mh-set-mode <global|direct|rule>\n' >&2
                 return 1
         fi

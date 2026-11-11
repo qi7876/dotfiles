@@ -1,5 +1,5 @@
 mh-update-provider() {
-        if [ -z "${1:-}" ]; then
+        if [[ -z "${1:-}" ]]; then
                 printf 'usage: mh-update-provider <provider>\n' >&2
                 return 1
         fi

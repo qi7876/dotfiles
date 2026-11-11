@@ -1,5 +1,5 @@
 mh-set-group-proxy() {
-        if [ -z "${1:-}" ] || [ -z "${2:-}" ]; then
+        if [[ -z ${1:-} || -z ${2:-} ]]; then
                 printf 'usage: mh-set-group-proxy <group> <proxy>\n' >&2
                 return 1
         fi

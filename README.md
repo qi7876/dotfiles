@@ -5,8 +5,8 @@ with individual symbolic links.
 
 ## Prerequisites
 
-Git, Bash 3.2 or newer, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
-macOS also requires Homebrew; Linux requires mise.
+Git, Bash 5 or newer, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
+macOS also requires Homebrew and its Bash package (`brew install bash`); Linux requires mise.
 
 Ghostty configuration is deployed only on macOS.
 The `s` alias invokes `ssh`.
@@ -40,7 +40,9 @@ existing `~/.bashrc` and `~/.bash_profile` that conflict with installation.
 Translate private settings from `~/.config/fish/secrets.fish` into
 `~/.config/bash/secrets.bash`; fish syntax cannot be sourced by Bash.
 The installer does not change your login shell. After installation, use
-`chsh -s /bin/bash` to select the system Bash, then open a new terminal.
+`chsh -s /opt/homebrew/bin/bash` on Apple Silicon macOS, or `chsh -s /bin/bash`
+on Linux. The chosen Bash 5+ executable must be listed in `/etc/shells`.
+Then open a new terminal.
 
 ## Local configuration
 

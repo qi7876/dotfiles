@@ -1,20 +1,33 @@
-if [ "$(uname -s)" = Darwin ]; then
-        eval "$(/opt/homebrew/bin/brew shellenv bash)"
+if ((BASH_VERSINFO[0] < 5)); then
+        printf 'This configuration requires Bash 5 or newer.\n' >&2
+        return 1
 fi
 
-# Prepend existing directories once, preserving the configured order.
-for shell_path in /opt/homebrew/opt/rustup/bin /opt/homebrew/opt/node@26/bin "$HOME/.cargo/bin" "$HOME/.local/bin"; do
-        case "$shell_path" in
-        /opt/homebrew/*) [ "$(uname -s)" = Darwin ] || continue ;;
-        esac
-        [ -d "$shell_path" ] || continue
-        case ":$PATH:" in
-        *":$shell_path:"*) ;;
-        *) PATH="$shell_path:$PATH" ;;
-        esac
+shell_kernel=$(uname -s)
+shell_paths=("$HOME/.local/bin" "$HOME/.cargo/bin")
+if [[ $shell_kernel == Darwin ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv bash)"
+        shell_paths+=(/opt/homebrew/opt/node@26/bin /opt/homebrew/opt/rustup/bin)
+fi
+
+# Move configured directories to the front and remove duplicate PATH entries.
+shell_path_list=()
+declare -A shell_seen_paths=()
+for shell_path in "${shell_paths[@]}"; do
+        [[ -d $shell_path ]] && shell_path_list+=("$shell_path")
 done
-unset shell_path
-export PATH
+mapfile -d : -t shell_paths < <(printf '%s:' "$PATH")
+shell_paths=("${shell_path_list[@]}" "${shell_paths[@]}")
+shell_path_list=()
+for shell_path in "${shell_paths[@]}"; do
+        # The suffix permits empty PATH entries (the current directory) as keys.
+        [[ -v 'shell_seen_paths[$shell_path/]' ]] && continue
+        shell_seen_paths["$shell_path/"]=1
+        shell_path_list+=("$shell_path")
+done
+printf -v PATH '%s:' "${shell_path_list[@]}"
+export PATH=${PATH%:}
+unset shell_paths shell_path_list shell_seen_paths shell_path
 
 export VISUAL=nvim
 export EDITOR=nvim
@@ -27,19 +40,19 @@ export HTTPS_PROXY="$https_proxy"
 export no_proxy=localhost,127.0.0.1,::1
 export NO_PROXY="$no_proxy"
 export MIHOMO_API=http://127.0.0.1:9090
-if [ -f "$HOME/.config/bash/secrets.bash" ]; then
+if [[ -f "$HOME/.config/bash/secrets.bash" ]]; then
         source "$HOME/.config/bash/secrets.bash"
 fi
 
 for shell_function in "$HOME"/.config/bash/functions/*.bash; do
-        [ -f "$shell_function" ] && source "$shell_function"
+        [[ -f "$shell_function" ]] && source "$shell_function"
 done
 unset shell_function
 
-case $- in
-*i*) ;;
-*) return 0 ;;
-esac
+if [[ $- != *i* ]]; then
+        unset shell_kernel
+        return 0
+fi
 
 # Append history so concurrent shells do not overwrite one another.
 HISTFILE="$HOME/.bash_history"
@@ -57,9 +70,10 @@ alias n=nvim
 alias s=ssh
 alias nv='nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader'
 
-if [ "$(uname -s)" = Linux ]; then
+if [[ $shell_kernel == Linux ]]; then
         eval "$(mise activate bash)"
 fi
+unset shell_kernel
 source <(fzf --bash)
 eval "$(zoxide init bash)"
 eval "$(starship init bash)"

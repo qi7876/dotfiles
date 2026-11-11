@@ -1,5 +1,5 @@
 copy() {
-        if [ "$#" -ne 1 ]; then
+        if (($# != 1)); then
                 printf 'usage: copy <file>\n' >&2
                 return 1
         fi
