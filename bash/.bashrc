@@ -6,8 +6,6 @@ HISTSIZE=10000
 HISTFILESIZE=20000
 shopt -s histappend checkwinsize
 
-export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
-
 alias ls='ls --color=auto -F'
 alias ll='ls -Alh'
 alias g=git
