@@ -5,7 +5,7 @@ repo_dir=$(CDPATH= cd -P "$(dirname "$0")/.." && pwd)
 kernel_name=$(uname -s)
 
 set -- \
-        "$repo_dir/git/config" "$HOME/.config/git/config" \
+        "$repo_dir/git/config" "$HOME/.gitconfig" \
         "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
         "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \

@@ -27,7 +27,8 @@ require Bash to run.
 Bash uses Readline completion and appends command history to `~/.bash_history`.
 PATH additions are process-local and skip directories that do not exist.
 
-The installer creates real directories and links each managed file separately.
+The installer links Git configuration at `~/.gitconfig`, creates real directories,
+and links each managed file separately.
 Installation reports all path conflicts before creating files or links and
 does not overwrite existing files.
 
@@ -50,7 +51,7 @@ Then open a new terminal.
 The installer creates these files empty when missing, sets mode `600`, and
 never overwrites or removes their contents:
 
-- `~/.config/git/credentials`
+- `~/.git-credentials`
 - `~/.bash_secrets`
 
 `.bash_secrets` uses Bash syntax and loads after the default environment settings,
