@@ -43,10 +43,10 @@ check_directory() {
 
 conflict_count=0
 for config_dir in "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/bash"; do
+        "$HOME/.config/dprint"; do
         check_directory "$config_dir"
 done
-for local_file in "$HOME/.config/git/credentials" "$HOME/.config/bash/secrets.bash"; do
+for local_file in "$HOME/.config/git/credentials" "$HOME/.bash_secrets"; do
         if test -L "$local_file" || { test -e "$local_file" && ! test -f "$local_file"; }; then
                 report_conflict "$local_file" 'expected a regular local file'
         fi
@@ -80,8 +80,8 @@ fi
 
 umask 077
 mkdir -p "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/bash"
-for local_file in "$HOME/.config/git/credentials" "$HOME/.config/bash/secrets.bash"; do
+        "$HOME/.config/dprint"
+for local_file in "$HOME/.config/git/credentials" "$HOME/.bash_secrets"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"
         fi

@@ -40,13 +40,13 @@ export HTTPS_PROXY="$https_proxy"
 export no_proxy=localhost,127.0.0.1,::1
 export NO_PROXY="$no_proxy"
 export MIHOMO_API=http://127.0.0.1:9090
-if [[ -f "$HOME/.config/bash/secrets.bash" ]]; then
-        source "$HOME/.config/bash/secrets.bash"
+if [[ -f "$HOME/.bash_secrets" ]]; then
+        source "$HOME/.bash_secrets"
 fi
 
 _mhcurl() {
         if [[ -z "${MIHOMO_API:-}" ]]; then
-                printf 'set MIHOMO_API in ~/.config/bash/secrets.bash\n' >&2
+                printf 'set MIHOMO_API in ~/.bash_secrets\n' >&2
                 return 1
         fi
         if [[ -n "${MIHOMO_SECRET:-}" ]]; then
