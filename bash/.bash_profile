@@ -21,7 +21,7 @@ export NO_PROXY="$no_proxy"
 export MIHOMO_API=http://127.0.0.1:9090
 source "$HOME/.secrets"
 
-# Only interactive login shells hand control to Fish.
+# Interactive login shells also load Bash functions and integrations.
 if [[ $- == *i* ]]; then
         source "$HOME/.bashrc"
 fi

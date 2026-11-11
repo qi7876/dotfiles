@@ -5,8 +5,8 @@ with individual symbolic links.
 
 ## Prerequisites
 
-Git, Bash, Fish, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
-macOS also requires Homebrew; Linux requires mise.
+Git, Bash 5 or newer, Fish, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
+macOS also requires Homebrew and its Bash package (`brew install bash`); Linux requires mise.
 
 Ghostty configuration is deployed only on macOS.
 The `s` alias invokes `ssh`.
@@ -20,14 +20,15 @@ Installation and removal always operate on the complete configuration set:
 ./scripts/uninstall.sh
 ```
 
-Both platforms use Bash as the login shell for environment initialization and
-Fish for interactive use. `.bash_profile` initializes Homebrew, PATH, editor,
-proxy, and other exported variables, then loads `~/.secrets` using Bash syntax.
-Interactive Bash shells replace themselves with Fish through `.bashrc`.
-Fish inherits the environment and provides functions, aliases, completion,
-command history, fzf, zoxide, Starship, and Linux mise activation.
-On Linux, Bash adds mise shims for programs that inherit its PATH; Fish activation
-updates project tools and environment variables during interactive use.
+Both platforms use Bash as the login and default interactive shell.
+`.bash_profile` initializes Homebrew, PATH, editor, proxy, and other exported
+variables, then loads `~/.secrets` using Bash syntax. Interactive login shells
+also source `.bashrc`; interactive non-login Bash shells read it directly.
+Bash provides functions, aliases, command history, fzf, zoxide, Starship, and
+Linux mise activation. Run `fish` explicitly to enter Fish, which inherits the
+Bash environment and provides the same interactive tools in its own syntax.
+On Linux, Bash adds mise shims for programs that inherit its PATH; interactive
+Bash and Fish activation update project tools and environment variables.
 The management scripts use POSIX sh and do not require Bash to run.
 PATH additions are process-local and prepended directly without deduplication.
 
@@ -36,16 +37,15 @@ and links each managed file separately.
 Installation reports all path conflicts before creating files or links and
 does not overwrite existing files.
 
-Non-interactive login Bash shells initialize the environment without starting
-Fish. Non-login Bash shells inherit their parent's environment; non-interactive
+Non-interactive login Bash shells only initialize the environment. Non-login Bash shells inherit their parent's environment; non-interactive
 ones do not load these files automatically. Start terminals through the Bash
 login shell so Fish inherits the initialized environment. Running Fish directly
 does not load `~/.secrets` or the Bash environment defaults.
 
 The installer does not change your account's login shell. Use
-`chsh -s /bin/bash` on macOS or Linux, or keep an existing Homebrew Bash login
-shell. The chosen executable must be listed in `/etc/shells`.
-Then open a new terminal. Use `bash --norc` for an interactive Bash session.
+`chsh -s /opt/homebrew/bin/bash` on Apple Silicon macOS or `chsh -s /bin/bash`
+on Linux. The chosen Bash 5+ executable must be listed in `/etc/shells`.
+Then open a new terminal. Run `fish` to enter Fish and `exit` to return to Bash.
 
 ## Local configuration
 
