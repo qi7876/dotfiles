@@ -17,5 +17,5 @@ if [[ $(uname -s) == Linux ]]; then
         eval "$(mise activate bash)"
 fi
 source <(fzf --bash)
-eval "$(zoxide init bash)"
 eval "$(starship init bash)"
+eval "$(zoxide init bash)"

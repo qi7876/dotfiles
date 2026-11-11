@@ -13,5 +13,5 @@ if test (uname -s) = Linux
     mise activate fish | source
 end
 fzf --fish | source
-zoxide init fish | source
 starship init fish | source
+zoxide init fish | source
