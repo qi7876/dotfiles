@@ -16,9 +16,10 @@ C4Container
 
 The scripts preflight every managed file link and deploy the shared `bash/` and
 `fish/` configurations. The Bash login profile initializes the environment and
-loads `~/.secrets`; interactive Bash also loads `.bashrc` for functions, aliases,
+loads `~/.secrets`; interactive Bash also loads `.bashrc` for aliases,
 history, fzf, zoxide, and Starship. Fish starts only when explicitly invoked and
-inherits the exported environment. Non-interactive login shells initialize only
+inherits the exported environment and provides clipboard and Mihomo functions.
+Starship identifies the current shell in the prompt. Non-interactive login shells initialize only
 the environment. On Linux, Bash adds mise shims to PATH for non-interactive
 programs, and both Bash and Fish activate mise hooks during interactive use.
 The installer links Git, Bash, Fish, Starship, Neovim, and dprint files using

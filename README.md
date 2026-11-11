@@ -24,9 +24,11 @@ Both platforms use Bash as the login and default interactive shell.
 `.bash_profile` initializes Homebrew, PATH, editor, proxy, and other exported
 variables, then loads `~/.secrets` using Bash syntax. Interactive login shells
 also source `.bashrc`; interactive non-login Bash shells read it directly.
-Bash provides functions, aliases, command history, fzf, zoxide, Starship, and
+Bash provides aliases, command history, fzf, zoxide, Starship, and
 Linux mise activation. Run `fish` explicitly to enter Fish, which inherits the
-Bash environment and provides the same interactive tools in its own syntax.
+Bash environment and provides the same interactive tools in its own syntax,
+plus the `copy` and Mihomo functions. Starship displays the current shell name
+before the prompt character.
 On Linux, Bash adds mise shims for programs that inherit its PATH; interactive
 Bash and Fish activation update project tools and environment variables.
 The management scripts use POSIX sh and do not require Bash to run.
@@ -60,7 +62,7 @@ so it can override them (for example, `export MIHOMO_SECRET=value`).
 
 ## Mihomo
 
-Use `mh-set-mode global`, `mh-set-mode direct`, or `mh-set-mode rule` to switch
+In Fish, use `mh-set-mode global`, `mh-set-mode direct`, or `mh-set-mode rule` to switch
 the running Mihomo instance's routing mode. These functions use `MIHOMO_API`
 (default `http://127.0.0.1:9090`) and the optional `MIHOMO_SECRET`.
 Mode changes use the [Mihomo configuration API](https://wiki.metacubex.one/api/).
