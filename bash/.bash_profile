@@ -4,6 +4,10 @@ if [[ $(uname -s) == Darwin ]]; then
 fi
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
+if [[ $(uname -s) == Linux ]]; then
+        eval "$(mise activate bash --shims)"
+fi
+
 export VISUAL=nvim
 export EDITOR=nvim
 export SUDO_EDITOR=nvim

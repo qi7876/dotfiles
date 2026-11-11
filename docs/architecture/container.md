@@ -18,7 +18,9 @@ The scripts preflight every managed file link and deploy the shared `bash/` and
 `fish/` configurations. The Bash login profile initializes the environment and
 loads `~/.secrets`; interactive Bash replaces itself with Fish. Non-interactive
 login shells initialize the environment without launching Fish. Fish inherits
-exported variables and loads interactive integrations, including mise on Linux.
+exported variables and loads interactive integrations. On Linux, Bash adds mise
+shims to PATH for non-interactive programs, while Fish activates mise hooks to
+update project tools and environment variables during interactive use.
 The installer links Git, Bash, Fish, Starship, Neovim, and dprint files using
 `~/.gitconfig`, `~/.bashrc`, `~/.bash_profile`, and files below `~/.config`.
 It also links `AGENTS.md` into existing tool directories.

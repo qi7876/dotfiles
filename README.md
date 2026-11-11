@@ -26,6 +26,8 @@ proxy, and other exported variables, then loads `~/.secrets` using Bash syntax.
 Interactive Bash shells replace themselves with Fish through `.bashrc`.
 Fish inherits the environment and provides functions, aliases, completion,
 command history, fzf, zoxide, Starship, and Linux mise activation.
+On Linux, Bash adds mise shims for programs that inherit its PATH; Fish activation
+updates project tools and environment variables during interactive use.
 The management scripts use POSIX sh and do not require Bash to run.
 PATH additions are process-local and prepended directly without deduplication.
 
