@@ -126,11 +126,9 @@ mh-upgrade() {
 [[ $- == *i* ]] || return 0
 
 # Append history so concurrent shells do not overwrite one another.
-HISTFILE="$HOME/.bash_history"
 HISTSIZE=10000
 HISTFILESIZE=20000
 shopt -s histappend checkwinsize
-bind 'set editing-mode emacs'
 
 export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
 
