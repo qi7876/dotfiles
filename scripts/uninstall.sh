@@ -5,14 +5,12 @@ repo_dir=$(CDPATH= cd -P "$(dirname "$0")/.." && pwd)
 kernel_name=$(uname -s)
 
 set -- \
-        "$repo_dir/git/config" "$HOME/.config/git/config" \
+        "$repo_dir/git/config" "$HOME/.gitconfig" \
         "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
         "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
-        "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish"
-for source in "$repo_dir"/fish/functions/*.fish; do
-        set -- "$@" "$source" "$HOME/.config/fish/functions/${source##*/}"
-done
+        "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
+        "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
 
 for agent_dir in "$HOME/.codex" "$HOME/.dsh" "$HOME/.claude"; do
         set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"

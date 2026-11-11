@@ -5,14 +5,12 @@ repo_dir=$(CDPATH= cd -P "$(dirname "$0")/.." && pwd)
 kernel_name=$(uname -s)
 
 set -- \
-        "$repo_dir/git/config" "$HOME/.config/git/config" \
+        "$repo_dir/git/config" "$HOME/.gitconfig" \
         "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
         "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
-        "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish"
-for source in "$repo_dir"/fish/functions/*.fish; do
-        set -- "$@" "$source" "$HOME/.config/fish/functions/${source##*/}"
-done
+        "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
+        "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
 
 existing_kind() {
         if test -L "$1"; then
@@ -44,11 +42,11 @@ check_directory() {
 }
 
 conflict_count=0
-for config_dir in "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/fish" "$HOME/.config/fish/functions"; do
+for config_dir in "$HOME/.config" "$HOME/.config/nvim" \
+        "$HOME/.config/dprint"; do
         check_directory "$config_dir"
 done
-for local_file in "$HOME/.config/git/credentials" "$HOME/.config/fish/secrets.fish"; do
+for local_file in "$HOME/.git-credentials" "$HOME/.bash_secrets"; do
         if test -L "$local_file" || { test -e "$local_file" && ! test -f "$local_file"; }; then
                 report_conflict "$local_file" 'expected a regular local file'
         fi
@@ -81,9 +79,9 @@ if test "$conflict_count" -gt 0; then
 fi
 
 umask 077
-mkdir -p "$HOME/.config" "$HOME/.config/git" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/fish" "$HOME/.config/fish/functions"
-for local_file in "$HOME/.config/git/credentials" "$HOME/.config/fish/secrets.fish"; do
+mkdir -p "$HOME/.config" "$HOME/.config/nvim" \
+        "$HOME/.config/dprint"
+for local_file in "$HOME/.git-credentials" "$HOME/.bash_secrets"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"
         fi
