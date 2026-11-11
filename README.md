@@ -9,7 +9,6 @@ Git, Bash 5 or newer, Fish, fzf, zoxide, Starship, jq, Neovim, and ripgrep.
 macOS also requires Homebrew and its Bash package (`brew install bash`); Linux requires mise.
 
 Ghostty configuration is deployed only on macOS.
-The `s` alias invokes `ssh`.
 
 ## Install
 
@@ -48,6 +47,21 @@ The installer does not change your account's login shell. Use
 `chsh -s /opt/homebrew/bin/bash` on Apple Silicon macOS or `chsh -s /bin/bash`
 on Linux. The chosen Bash 5+ executable must be listed in `/etc/shells`.
 Then open a new terminal. Run `fish` to enter Fish and `exit` to return to Bash.
+
+## Aliases
+
+Bash and Fish share these aliases:
+
+| Alias | Behavior |
+| --- | --- |
+| `ls` | Automatic color and file type markers; default layout in terminals, one entry per line in pipes. |
+| `ll` | Detailed listing with hidden files, human-readable sizes, and the same color and type markers as `ls`. |
+| `g` | `git` |
+| `n` | `nvim` |
+| `s` | `ssh` |
+| `nv` | Query GPU index, name, memory usage/total, and utilization with `nvidia-smi`. |
+
+Additional arguments pass through to the underlying commands.
 
 ## Local configuration
 
