@@ -23,6 +23,5 @@ The installer links Git, Bash, Fish, Starship, Neovim, and dprint files using
 `~/.gitconfig`, `~/.bashrc`, `~/.bash_profile`, and files below `~/.config`.
 It also links `AGENTS.md` into existing tool directories.
 `~/.secrets` and `~/.git-credentials` remain ordinary local files. Secrets use
-Bash syntax, load after the default environment, and can override it. Installation
-renames the former `~/.bash_secrets` after preflight and rejects migration when
-both names exist. Uninstall preserves private files.
+Bash syntax, load after the default environment, and can override it. Uninstall
+preserves private files.

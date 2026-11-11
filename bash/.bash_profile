@@ -18,6 +18,6 @@ export MIHOMO_API=http://127.0.0.1:9090
 source "$HOME/.secrets"
 
 # Only interactive login shells hand control to Fish.
-if [[ $- == *i* && -f "$HOME/.bashrc" ]]; then
+if [[ $- == *i* ]]; then
         source "$HOME/.bashrc"
 fi

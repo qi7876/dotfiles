@@ -40,15 +40,10 @@ ones do not load these files automatically. Start terminals through the Bash
 login shell so Fish inherits the initialized environment. Running Fish directly
 does not load `~/.secrets` or the Bash environment defaults.
 
-The installer renames an existing `~/.bash_secrets` to `~/.secrets` without
-changing its contents. If both exist, merge them manually and remove
-`~/.bash_secrets` before installing. Existing unmanaged shell configuration files
-must be backed up and removed if they conflict with installation.
 The installer does not change your account's login shell. Use
 `chsh -s /bin/bash` on macOS or Linux, or keep an existing Homebrew Bash login
 shell. The chosen executable must be listed in `/etc/shells`.
-Then open a new terminal. If Fish is unavailable, interactive startup reports
-that and continues in Bash. Use `bash --norc` for an interactive Bash session.
+Then open a new terminal. Use `bash --norc` for an interactive Bash session.
 
 ## Local configuration
 

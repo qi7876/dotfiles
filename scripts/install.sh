@@ -54,14 +54,6 @@ for local_file in "$HOME/.git-credentials" "$HOME/.secrets"; do
                 report_conflict "$local_file" 'expected a regular local file'
         fi
 done
-# Migrate the private file only after all preflight checks pass.
-if test -e "$HOME/.bash_secrets" || test -L "$HOME/.bash_secrets"; then
-        if test -L "$HOME/.bash_secrets" || ! test -f "$HOME/.bash_secrets"; then
-                report_conflict "$HOME/.bash_secrets" 'expected a regular local file for migration'
-        elif test -e "$HOME/.secrets" || test -L "$HOME/.secrets"; then
-                report_conflict "$HOME/.secrets" 'both secrets files exist; merge them manually and remove ~/.bash_secrets'
-        fi
-fi
 for agent_dir in "$HOME/.codex" "$HOME/.dsh" "$HOME/.claude"; do
         if test -d "$agent_dir" && ! test -L "$agent_dir"; then
                 set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"
@@ -90,9 +82,6 @@ if test "$conflict_count" -gt 0; then
 fi
 
 umask 077
-if test -f "$HOME/.bash_secrets"; then
-        mv "$HOME/.bash_secrets" "$HOME/.secrets"
-fi
 mkdir -p "$HOME/.config" "$HOME/.config/nvim" \
         "$HOME/.config/dprint" "$HOME/.config/fish/functions"
 for local_file in "$HOME/.git-credentials" "$HOME/.secrets"; do
