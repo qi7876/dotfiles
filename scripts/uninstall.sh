@@ -9,9 +9,10 @@ set -- \
         "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
         "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
-        "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish"
-for source in "$repo_dir"/fish/functions/*.fish; do
-        set -- "$@" "$source" "$HOME/.config/fish/functions/${source##*/}"
+        "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
+        "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
+for source in "$repo_dir"/bash/functions/*.bash; do
+        set -- "$@" "$source" "$HOME/.config/bash/functions/${source##*/}"
 done
 
 for agent_dir in "$HOME/.codex" "$HOME/.dsh" "$HOME/.claude"; do
