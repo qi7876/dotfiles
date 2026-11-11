@@ -1,4 +1,23 @@
-# Login shells load the same configuration as interactive non-login shells.
-if [[ -f "$HOME/.bashrc" ]]; then
+if [[ $(uname -s) == Darwin ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv bash)"
+        export PATH="/opt/homebrew/opt/node@26/bin:/opt/homebrew/opt/rustup/bin:$PATH"
+fi
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+
+export VISUAL=nvim
+export EDITOR=nvim
+export SUDO_EDITOR=nvim
+export UV_DEFAULT_INDEX=https://mirrors.aliyun.com/pypi/simple/
+export http_proxy=http://127.0.0.1:7890
+export https_proxy="$http_proxy"
+export HTTP_PROXY="$http_proxy"
+export HTTPS_PROXY="$https_proxy"
+export no_proxy=localhost,127.0.0.1,::1
+export NO_PROXY="$no_proxy"
+export MIHOMO_API=http://127.0.0.1:9090
+source "$HOME/.secrets"
+
+# Only interactive login shells hand control to Fish.
+if [[ $- == *i* && -f "$HOME/.bashrc" ]]; then
         source "$HOME/.bashrc"
 fi

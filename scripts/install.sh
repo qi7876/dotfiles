@@ -2,7 +2,6 @@
 set -eu
 
 repo_dir=$(CDPATH= cd -P "$(dirname "$0")/.." && pwd)
-kernel_name=$(uname -s)
 
 set -- \
         "$repo_dir/git/config" "$HOME/.gitconfig" \
@@ -11,6 +10,10 @@ set -- \
         "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
         "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
         "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
+set -- "$@" "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish"
+for function_file in "$repo_dir"/fish/functions/*.fish; do
+        set -- "$@" "$function_file" "$HOME/.config/fish/functions/$(basename "$function_file")"
+done
 
 existing_kind() {
         if test -L "$1"; then
@@ -43,14 +46,22 @@ check_directory() {
 
 conflict_count=0
 for config_dir in "$HOME/.config" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint"; do
+        "$HOME/.config/dprint" "$HOME/.config/fish" "$HOME/.config/fish/functions"; do
         check_directory "$config_dir"
 done
-for local_file in "$HOME/.git-credentials" "$HOME/.bash_secrets"; do
+for local_file in "$HOME/.git-credentials" "$HOME/.secrets"; do
         if test -L "$local_file" || { test -e "$local_file" && ! test -f "$local_file"; }; then
                 report_conflict "$local_file" 'expected a regular local file'
         fi
 done
+# Migrate the private file only after all preflight checks pass.
+if test -e "$HOME/.bash_secrets" || test -L "$HOME/.bash_secrets"; then
+        if test -L "$HOME/.bash_secrets" || ! test -f "$HOME/.bash_secrets"; then
+                report_conflict "$HOME/.bash_secrets" 'expected a regular local file for migration'
+        elif test -e "$HOME/.secrets" || test -L "$HOME/.secrets"; then
+                report_conflict "$HOME/.secrets" 'both secrets files exist; merge them manually and remove ~/.bash_secrets'
+        fi
+fi
 for agent_dir in "$HOME/.codex" "$HOME/.dsh" "$HOME/.claude"; do
         if test -d "$agent_dir" && ! test -L "$agent_dir"; then
                 set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"
@@ -79,9 +90,12 @@ if test "$conflict_count" -gt 0; then
 fi
 
 umask 077
+if test -f "$HOME/.bash_secrets"; then
+        mv "$HOME/.bash_secrets" "$HOME/.secrets"
+fi
 mkdir -p "$HOME/.config" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint"
-for local_file in "$HOME/.git-credentials" "$HOME/.bash_secrets"; do
+        "$HOME/.config/dprint" "$HOME/.config/fish/functions"
+for local_file in "$HOME/.git-credentials" "$HOME/.secrets"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"
         fi
