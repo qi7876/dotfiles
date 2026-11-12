@@ -4,12 +4,11 @@ set -eu
 repo_dir=$(CDPATH= cd -P "$(dirname "$0")/.." && pwd)
 
 set -- \
-        "$repo_dir/git/config" "$HOME/.gitconfig" \
-        "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
-        "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
-        "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
-        "$repo_dir/bash/.bashrc" "$HOME/.bashrc" \
-        "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
+        "$repo_dir/gitconfig" "$HOME/.gitconfig" \
+        "$repo_dir/nvim_init.lua" "$HOME/.config/nvim/init.lua" \
+        "$repo_dir/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
+        "$repo_dir/starship.toml" "$HOME/.config/starship.toml" \
+        "$repo_dir/bash_profile" "$HOME/.bash_profile"
 set -- "$@" "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish"
 for function_file in "$repo_dir"/fish/functions/*.fish; do
         set -- "$@" "$function_file" "$HOME/.config/fish/functions/$(basename "$function_file")"
@@ -49,7 +48,7 @@ for config_dir in "$HOME/.config" "$HOME/.config/nvim" \
         "$HOME/.config/dprint" "$HOME/.config/fish" "$HOME/.config/fish/functions"; do
         check_directory "$config_dir"
 done
-for local_file in "$HOME/.git-credentials" "$HOME/.secrets"; do
+for local_file in "$HOME/.git-credentials" "$HOME/.secrets.sh"; do
         if test -L "$local_file" || { test -e "$local_file" && ! test -f "$local_file"; }; then
                 report_conflict "$local_file" 'expected a regular local file'
         fi
@@ -84,7 +83,7 @@ fi
 umask 077
 mkdir -p "$HOME/.config" "$HOME/.config/nvim" \
         "$HOME/.config/dprint" "$HOME/.config/fish/functions"
-for local_file in "$HOME/.git-credentials" "$HOME/.secrets"; do
+for local_file in "$HOME/.git-credentials" "$HOME/.secrets.sh"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"
         fi
