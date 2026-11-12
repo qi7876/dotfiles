@@ -19,4 +19,5 @@ export no_proxy=localhost,127.0.0.1,::1
 export NO_PROXY="$no_proxy"
 export MIHOMO_API=http://127.0.0.1:9090
 export FZF_DEFAULT_OPTS='--walker-skip=Library,.Trash,.cache,.npm,.pnpm-store,.cargo/registry,.git,node_modules,.venv,venv,__pycache__,.pytest_cache,.mypy_cache,.ruff_cache,.tox,.nox,target,dist,.astro'
+alias f='fish'
 source "$HOME/.secrets.sh"
