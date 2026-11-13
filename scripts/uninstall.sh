@@ -14,7 +14,7 @@ for function_file in "$repo_dir"/fish/functions/*.fish; do
         set -- "$@" "$function_file" "$HOME/.config/fish/functions/$(basename "$function_file")"
 done
 
-for agent_dir in "$HOME/.codex" "$HOME/.dsh" "$HOME/.claude"; do
+for agent_dir in "$HOME/.codex" "$HOME/.gemini" "$HOME/.dsh" "$HOME/.claude"; do
         set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"
 done
 while test "$#" -gt 0; do
