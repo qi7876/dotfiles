@@ -1,13 +1,8 @@
 vim.opt.number = true
 vim.opt.scrolloff = 8
 vim.opt.mouse = "a"
-
-if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
-    vim.g.clipboard = "osc52"
-end
-
+vim.g.clipboard = "osc52"
 vim.opt.clipboard = "unnamedplus"
-
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
