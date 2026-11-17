@@ -3,9 +3,5 @@ function _mhcurl
         printf 'set MIHOMO_API in ~/.secrets\n' >&2
         return 1
     end
-    if set -q MIHOMO_SECRET[1]; and test -n "$MIHOMO_SECRET"
-        command curl -fsS -H "Authorization: Bearer $MIHOMO_SECRET" $argv
-    else
-        command curl -fsS $argv
-    end
+    command curl -fsS $argv
 end
