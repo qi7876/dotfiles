@@ -1,6 +1,8 @@
 if [[ $(uname -s) == 'Darwin' ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv bash)"
-        export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+        export PATH="/opt/homebrew/opt/rustup/bin:/opt/homebrew/opt/llvm/bin:$PATH"
+        export LDFLAGS='-L/opt/homebrew/opt/llvm/lib'
+        export CPPFLAGS='-I/opt/homebrew/opt/llvm/include'
 else
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
         export PATH="/home/linuxbrew/.linuxbrew/opt/rustup/bin:$PATH"
