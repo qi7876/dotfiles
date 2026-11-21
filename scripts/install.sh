@@ -94,5 +94,3 @@ while test "$#" -gt 0; do
                 ln -s "$source" "$destination"
         fi
 done
-
-. "$repo_dir/scripts/remove-legacy-fish-links.sh"

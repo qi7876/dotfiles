@@ -22,5 +22,3 @@ while test "$#" -gt 0; do
                 rm "$destination"
         fi
 done
-
-. "$repo_dir/scripts/remove-legacy-fish-links.sh"
