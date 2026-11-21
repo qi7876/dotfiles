@@ -7,6 +7,7 @@ Requires Git, Bash 5+, Fish, fzf, zoxide, jq, Neovim, and ripgrep.
 ./scripts/uninstall.sh
 ```
 
+Fish loads the functions and interactive settings from `fish/config.fish`.
 After installation, run `mh-reload` in Fish to reload the configuration file of
 the mihomo instance at `MIHOMO_API`.
 
