@@ -7,8 +7,6 @@ set -- \
         "$repo_dir/fish/config.fish" "$HOME/.config/fish/config.fish" \
         "$repo_dir/git/config" "$HOME/.gitconfig" \
         "$repo_dir/nvim/init.lua" "$HOME/.config/nvim/init.lua" \
-        "$repo_dir/dprint/dprint.jsonc" "$HOME/.config/dprint/dprint.jsonc" \
-        "$repo_dir/starship/starship.toml" "$HOME/.config/starship.toml" \
         "$repo_dir/bash/.bash_profile" "$HOME/.bash_profile"
 
 existing_kind() {
@@ -41,8 +39,7 @@ check_directory() {
 }
 
 conflict_count=0
-for config_dir in "$HOME/.config" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/fish"; do
+for config_dir in "$HOME/.config" "$HOME/.config/nvim" "$HOME/.config/fish"; do
         check_directory "$config_dir"
 done
 for local_file in "$HOME/.git-credentials" "$HOME/.secrets.sh"; do
@@ -50,7 +47,7 @@ for local_file in "$HOME/.git-credentials" "$HOME/.secrets.sh"; do
                 report_conflict "$local_file" 'expected a regular local file'
         fi
 done
-for agent_dir in "$HOME/.codex" "$HOME/.gemini" "$HOME/.dsh" "$HOME/.claude"; do
+for agent_dir in "$HOME/.codex" "$HOME/.gemini" "$HOME/.claude"; do
         if test -d "$agent_dir" && ! test -L "$agent_dir"; then
                 set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"
         else
@@ -78,8 +75,7 @@ if test "$conflict_count" -gt 0; then
 fi
 
 umask 077
-mkdir -p "$HOME/.config" "$HOME/.config/nvim" \
-        "$HOME/.config/dprint" "$HOME/.config/fish"
+mkdir -p "$HOME/.config" "$HOME/.config/nvim" "$HOME/.config/fish"
 for local_file in "$HOME/.git-credentials" "$HOME/.secrets.sh"; do
         if ! test -e "$local_file"; then
                 printf '' >"$local_file"
