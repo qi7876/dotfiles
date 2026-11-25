@@ -47,7 +47,7 @@ for local_file in "$HOME/.git-credentials" "$HOME/.secrets.sh"; do
                 report_conflict "$local_file" 'expected a regular local file'
         fi
 done
-for agent_dir in "$HOME/.codex" "$HOME/.gemini" "$HOME/.claude"; do
+for agent_dir in "$HOME/.codex" "$HOME/.gemini"; do
         if test -d "$agent_dir" && ! test -L "$agent_dir"; then
                 set -- "$@" "$repo_dir/AGENTS.md" "$agent_dir/AGENTS.md"
         else
